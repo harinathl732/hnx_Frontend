@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HNX Quantum | Settings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="ambient-glow bg-cyan"></div>
+  <div class="ambient-glow bg-purple"></div>
+
+  <div id="sidebar-overlay" class="sidebar-overlay hidden"></div>
+  <nav id="sidebar-drawer" class="sidebar-drawer">
+    <div class="sidebar-header">
+      <div class="sidebar-logo"><img src="logo.png" alt="HNX" class="brand-logo-img-sm" /><span>HNX Quantum</span></div>
+      <button id="close-sidebar-btn" class="sidebar-close-btn"><i data-lucide="x">✕</i></button>
+    </div>
+    <ul class="sidebar-nav-list">
+      <li><a href="dashboard.html" class="sidebar-link" data-page="dashboard"><i data-lucide="layout-dashboard">📊</i><span>Dashboard</span></a></li>
+      <li><a href="strategy.html" class="sidebar-link" data-page="strategy"><i data-lucide="trending-up">📈</i><span>Strategies</span></a></li>
+      <li><a href="order-history.html" class="sidebar-link" data-page="history"><i data-lucide="history">⏳</i><span>Order History</span></a></li>
+      <li><a href="settings.html" class="sidebar-link" data-page="settings"><i data-lucide="settings">⚙️</i><span>Settings</span></a></li>
+    </ul>
+    <div class="sidebar-footer-actions">
+      <button id="sidebar-logout-btn" class="sidebar-logout-btn"><i data-lucide="log-out">🚪</i><span>Sign Out</span></button>
+    </div>
+  </nav>
+
+  <header class="top-bar">
+    <button id="hamburger-btn" class="hamburger-btn"><i data-lucide="menu">☰</i></button>
+    <div class="top-bar-logo">
+      <img src="logo.png" alt="HNX Quantum" class="brand-logo-img-sm" />
+      <span class="brand-logo-text">HNX Quantum</span>
+    </div>
+    <div class="top-bar-right">
+      <span class="status-pill status-unlinked" id="ip-status-badge">IP Not Assigned</span>
+      <button class="nav-icon-btn"><i data-lucide="bell">🔔</i></button>
+      <div class="avatar-wrapper">
+        <div class="avatar-btn" id="profile-avatar-btn">H</div>
+        <div class="profile-dropdown hidden" id="profile-dropdown-menu">
+          <div class="dropdown-section"><span class="section-label">MY PROFILE</span><h4 id="dropdown-user-name">Trader</h4></div>
+          <div class="profile-details">
+            <div class="detail-item"><i data-lucide="mail">✉️</i><span id="dropdown-user-email">-</span></div>
+            <div class="detail-item"><i data-lucide="phone">📞</i><span id="dropdown-user-phone">-</span></div>
+          </div>
+          <hr class="dropdown-divider" />
+          <a href="#" class="dropdown-item" id="change-password-trigger"><i data-lucide="key-round">🔑</i><span>Change Password</span></a>
+          <a href="#" class="dropdown-item logout" id="logout-btn"><i data-lucide="log-out">🚪</i><span>Sign Out</span></a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    <main class="page-content">
+      <div class="settings-page-header">
+        <h2>Settings</h2>
+        <p>Manage your broker accounts and security preferences.</p>
+      </div>
+
+      <div class="settings-stack">
+        <!-- API Credentials -->
+        <div class="settings-card">
+          <div class="settings-card-title-row">
+            <span class="settings-card-icon">🔑</span>
+            <div><h3>API Credentials</h3><p class="settings-card-sub">Your Zerodha Kite Connect API keys.</p></div>
+          </div>
+          <form id="broker-creds-form" class="settings-form-body">
+            <div class="input-group">
+              <label for="api-key">API KEY</label>
+              <input type="text" id="api-key" required placeholder="Enter your Kite API Key" />
+            </div>
+            <div class="input-group">
+              <label for="api-secret">API SECRET</label>
+              <div class="password-wrapper">
+                <input type="password" id="api-secret" required placeholder="••••••••••••" />
+                <button type="button" class="eye-toggle"><i data-lucide="eye"></i></button>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-save-creds btn-block">
+              <i data-lucide="save"></i> Save Credentials
+            </button>
+          </form>
+        </div>
+
+        <!-- Broker Connectivity -->
+        <div class="settings-card">
+          <div class="settings-card-title-row">
+            <span class="settings-card-icon">🛡️</span>
+            <div><h3>Broker Connectivity</h3><p class="settings-card-sub">Connect to Indian exchanges via Zerodha Kite.</p></div>
+          </div>
+
+          <div class="broker-connect-row">
+            <div class="broker-identity">
+              <div class="broker-logo-wrap">
+                <svg viewBox="0 0 36 36" fill="none" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="18" cy="18" r="18" fill="#e74c3c"/>
+                  <path d="M10 22 L18 10 L26 22 Z" fill="white" opacity="0.9"/>
+                </svg>
+              </div>
+              <div>
+                <span class="broker-name-label">Zerodha Kite</span>
+                <span class="broker-sub-label">Required for trading NFO/MCX instruments.</span>
+              </div>
+            </div>
+            <button id="authorize-broker-btn" class="btn btn-broker-connect" disabled>
+              <i data-lucide="link"></i> Save Credentials First
+            </button>
+          </div>
+
+          <div class="session-note">
+            <i data-lucide="info"></i>
+            <span>
+              <strong>Note:</strong> Zerodha sessions expire every day at morning. You need to re-login once per day to enable automated trading.
+              <br/><span class="session-note-highlight">Must login daily from 8:50 AM to 9:10 AM only.</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div id="change-password-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header"><h2>Change Password</h2><button id="close-change-pass-btn" class="modal-close">&times;</button></div>
+      <form id="change-password-form">
+        <div class="input-group"><label>Current Password</label><div class="password-wrapper"><input type="password" id="change-curr-password" required placeholder="••••••••••••" /><button type="button" class="eye-toggle"><i data-lucide="eye"></i></button></div></div>
+        <div class="input-group"><label>New Password</label><div class="password-wrapper"><input type="password" id="change-new-password" required placeholder="••••••••••••" /><button type="button" class="eye-toggle"><i data-lucide="eye"></i></button></div><div class="validation-rules"><p id="change-rule-length" class="invalid">❌ Minimum 8 characters</p><p id="change-rule-number" class="invalid">❌ At least 1 number</p><p id="change-rule-special" class="invalid">❌ At least 1 special character</p></div></div>
+        <div class="input-group"><label>Confirm New Password</label><div class="password-wrapper"><input type="password" id="change-conf-password" required placeholder="••••••••••••" /><button type="button" class="eye-toggle"><i data-lucide="eye"></i></button></div></div>
+        <button type="submit" class="btn btn-primary btn-block"><i data-lucide="check"></i> Update Password</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="notification-toast" class="toast hidden"></div>
+  <button class="support-float-btn"><i data-lucide="headphones"></i></button>
+
+  <script src="app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      await bootPage("settings");
+      await loadBrokerSettings();
+      initSettingsForms();
+    });
+
+    async function loadBrokerSettings() {
+      if (!apiConnected) return;
+      try {
+        const res = await fetch(`${API_BASE}/brokers/zerodha/status`, {
+          headers: { "Authorization": `Bearer ${jwtToken}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.configured) {
+            document.getElementById("api-key").value = data.api_key;
+            document.getElementById("api-secret").value = "••••••••••••";
+          }
+          updateAuthButton(data.configured, data.session_active);
+        }
+      } catch {}
+    }
+
+    function updateAuthButton(configured, sessionActive) {
+      const btn = document.getElementById("authorize-broker-btn");
+      if (!btn) return;
+      if (!configured) {
+        btn.disabled = true; btn.innerHTML = '<i data-lucide="link"></i> Save Credentials First';
+      } else if (sessionActive) {
+        btn.disabled = true; btn.innerHTML = '<i data-lucide="check-circle"></i> Broker Linked & Active';
+      } else {
+        btn.disabled = false; btn.innerHTML = '<i data-lucide="link"></i> Authenticate Active Session';
+      }
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    function initSettingsForms() {
+      // Save credentials
+      document.getElementById("broker-creds-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const apiKey = document.getElementById("api-key").value;
+        const apiSecret = document.getElementById("api-secret").value;
+        if (apiConnected) {
+          try {
+            const res = await fetch(`${API_BASE}/brokers/zerodha/credentials`, {
+              method: "POST",
+              headers: { "Content-Type":"application/json", "Authorization":`Bearer ${jwtToken}` },
+              body: JSON.stringify({ api_key: apiKey, api_secret: apiSecret })
+            });
+            if (res.ok) {
+              showToast("API credentials saved!");
+              await loadBrokerSettings();
+            } else { showToast("Failed to save credentials."); }
+          } catch { showToast("Server error."); }
+        } else {
+          showToast("Simulator: credentials cached!");
+          updateAuthButton(true, false);
+        }
+      });
+
+      // Authorize session
+      document.getElementById("authorize-broker-btn").addEventListener("click", async () => {
+        if (apiConnected) {
+          try {
+            const res = await fetch(`${API_BASE}/brokers/zerodha/url`, {
+              headers: { "Authorization": `Bearer ${jwtToken}` }
+            });
+            if (res.ok) {
+              const data = await res.json();
+              window.open(data.login_url, "_blank");
+              showToast("Redirecting to Zerodha Kite login...");
+            } else { showToast("Save credentials first."); }
+          } catch { showToast("Server error."); }
+        } else {
+          showToast("Simulator: session linked!");
+          updateAuthButton(true, true);
+          updateBrokerStatus(true);
+        }
+      });
+    }
+  </script>
+</body>
+</html>

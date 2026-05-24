@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- SEO Meta Tags -->
+  <title>HNX Quantum | Advanced Option Buying Automation</title>
+  <meta name="description" content="Manage your HNX Quantum option buying strategies, configure risk guards, and track live P&L securely." />
+  
+  <!-- Google Fonts & Libraries -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <!-- External CSS Reset and Stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+  
+  <!-- Lucide Icons & Chart.js -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Background Ambient Lights -->
+  <div class="ambient-glow bg-cyan"></div>
+  <div class="ambient-glow bg-purple"></div>
+
+  <!-- ================= SPLIT SCREEN AUTH CONTAINER (REVERSED: FORMS ON LEFT) ================= -->
+  <div id="auth-container" class="auth-wrapper">
+    
+    <!-- Floating Glassmorphic Landing Navigation Bar -->
+    <header class="landing-nav">
+      <div class="logo-group">
+        <img src="logo.png" alt="HNX Quantum Logo" class="brand-logo-img-sm" />
+        <span>HNX Quantum</span>
+      </div>
+      <nav class="landing-links">
+        <a href="#" class="landing-link" id="nav-features">Features</a>
+        <a href="#" class="landing-link" id="nav-strategies">Strategies</a>
+        <a href="#" class="landing-link" id="nav-privacy">Privacy Policy</a>
+        <a href="#" class="landing-link" id="nav-terms">Terms of Service</a>
+        <a href="#" class="landing-link" id="nav-help">Help Hub</a>
+      </nav>
+      <div class="landing-actions">
+        <button class="btn btn-secondary btn-sm" id="nav-login-btn">Log In</button>
+        <button class="btn btn-orange btn-sm" id="nav-signup-btn">Sign Up</button>
+      </div>
+    </header>
+
+    <!-- Left Section: Forms Console -->
+    <div class="auth-right">
+      <div class="auth-card">
+        
+        <!-- Google Single-Sign-On -->
+        <button type="button" class="btn btn-google btn-block">
+          <svg class="google-svg" viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+          </svg>
+          <span>Continue with Google</span>
+        </button>
+        
+        <div class="auth-divider">
+          <span>OR</span>
+        </div>
+        
+        <!-- 1. LOGIN FORM -->
+        <form id="login-form" class="auth-form active">
+          <h2>Welcome Back</h2>
+          <p class="form-desc">Log in to your trading dashboard</p>
+          
+          <div class="input-group">
+            <label for="login-email">Email</label>
+            <input type="email" id="login-email" required placeholder="harinathl732@gmail.com" />
+          </div>
+          
+          <div class="input-group">
+            <div class="label-row">
+              <label for="login-password">Password</label>
+              <a href="#" id="to-forgot" class="forgot-link">Forgot Password?</a>
+            </div>
+            <div class="password-wrapper">
+              <input type="password" id="login-password" required placeholder="••••••••••••" />
+              <button type="button" class="eye-toggle"><i data-lucide="eye"></i></button>
+            </div>
+          </div>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="login-agree" required checked />
+            <label for="login-agree">I agree to the <a href="#" class="trigger-terms">HNX Quantum T&C</a> and <a href="#" class="trigger-privacy">Privacy Policy</a>.</label>
+          </div>
+          
+          <button type="submit" class="btn btn-orange btn-block">Log In</button>
+          
+          <p class="broker-note">Daily login required for broker session refresh.</p>
+          <p class="auth-toggle">Don't have an account? <a href="#" id="to-register">Sign Up</a></p>
+        </form>
+
+        <!-- 2. REGISTER FORM -->
+        <form id="register-form" class="auth-form">
+          <h2>Create Account</h2>
+          <p class="form-desc">Start your algorithmic trading journey</p>
+          
+          <div class="input-group">
+            <label for="reg-name">Full Name</label>
+            <input type="text" id="reg-name" required placeholder="Enter your full name" />
+          </div>
+          
+          <div class="input-group">
+            <label for="reg-email">Email Address</label>
+            <input type="email" id="reg-email" required placeholder="Enter your email" />
+          </div>
+          
+          <div class="input-group">
+            <label for="reg-phone">Mobile Number</label>
+            <input type="tel" id="reg-phone" required placeholder="Enter your phone number" />
+          </div>
+          
+          <div class="input-group">
+            <label for="reg-password">Password</label>
+            <div class="password-wrapper">
+              <input type="password" id="reg-password" required placeholder="••••••••••••" />
+              <button type="button" class="eye-toggle"><i data-lucide="eye"></i></button>
+            </div>
+            <!-- Password Validation Rules UI -->
+            <div id="password-validation-rules" class="validation-rules">
+              <p id="rule-length" class="invalid">❌ Minimum 8 characters</p>
+              <p id="rule-number" class="invalid">❌ At least 1 number</p>
+              <p id="rule-special" class="invalid">❌ At least 1 special character</p>
+            </div>
+          </div>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="reg-agree" required />
+            <label for="reg-agree">I agree to the <a href="#" class="trigger-terms">HNX Quantum T&C</a> and <a href="#" class="trigger-privacy">Privacy Policy</a>.</label>
+          </div>
+          
+          <button type="submit" class="btn btn-orange btn-block">Sign Up</button>
+          
+          <p class="auth-toggle">Already have an account? <a href="#" id="to-login">Log In</a></p>
+        </form>
+
+        <!-- 3. FORGOT PASSWORD FORM -->
+        <form id="forgot-form" class="auth-form">
+          <h2>Reset Password</h2>
+          <p class="form-desc">Verify your registered email and set a new password</p>
+          
+          <div class="input-group">
+            <label for="forgot-email">Email Address</label>
+            <input type="email" id="forgot-email" required placeholder="Enter your registered email" />
+          </div>
+          
+          <button type="submit" class="btn btn-orange btn-block">Send Reset OTP</button>
+          
+          <p class="auth-toggle">Remembered password? <a href="#" id="forgot-to-login">Log In</a></p>
+        </form>
+        
+      </div>
+    </div>
+
+    <!-- Right Section: Details & Value Propositions -->
+    <div class="auth-left">
+      <div class="auth-left-header" style="opacity: 0; pointer-events: none;">
+        <!-- Retained for structure spacing, header handles logo globally -->
+        <div class="logo-group">
+          <img src="logo.png" alt="HNX Quantum Logo" class="brand-logo-img-sm" />
+          <span>HNX Quantum</span>
+        </div>
+      </div>
+      
+      <div class="auth-left-content">
+        <span class="gold-pill-badge"><i data-lucide="crown"></i> GOLD PREMIUM</span>
+        <h1>Algorithmic Trading.<br/>Simplified.</h1>
+        <p class="focus-text">Specially Designed For <span class="highlight-orange">Option Buyers</span></p>
+        <p class="desc-text">Automate your trades with precision. Bank-level security and real-time execution.</p>
+        
+        <!-- 2x2 Feature Grid -->
+        <div class="prop-grid">
+          <div class="grid-card">
+            <i data-lucide="check-circle-2" class="icon-success"></i>
+            <div>
+              <h4>Supports Zerodha & Fyers</h4>
+              <p>Native Kite & Fyers API integration callback systems.</p>
+            </div>
+          </div>
+          <div class="grid-card">
+            <i data-lucide="shield-check" class="icon-amber"></i>
+            <div>
+              <h4>Bank-level security</h4>
+              <p>AES-256-GCM database encrypted API credentials storage.</p>
+            </div>
+          </div>
+          <div class="grid-card">
+            <i data-lucide="zap" class="icon-cyan"></i>
+            <div>
+              <h4>Real-time execution</h4>
+              <p>Asynchronous multi-tenant cloud ticket evaluation loops.</p>
+            </div>
+          </div>
+          <div class="grid-card">
+            <i data-lucide="users" class="icon-purple"></i>
+            <div>
+              <h4>1,000+ traders</h4>
+              <p>Trusted daily by active retail options buyers across India.</p>
+            </div>
+          </div>
+        </div>
+        
+        <button type="button" class="btn btn-orange btn-learn" id="learn-more-trigger">
+          <span>Learn More</span> <i data-lucide="chevron-right"></i>
+        </button>
+      </div>
+
+      <!-- Right Floating Ambient Vector Elements -->
+      <div class="floating-shape shape-crown"><i data-lucide="crown"></i></div>
+      <div class="floating-shape shape-shield"><i data-lucide="shield"></i></div>
+      <div class="floating-shape shape-zap"><i data-lucide="zap"></i></div>
+
+      <div class="auth-left-footer">
+        <div class="footer-links">
+          <a href="#" class="trigger-help">Help</a>
+          <span class="sep">|</span>
+          <a href="#" class="trigger-privacy">Privacy</a>
+          <span class="sep">|</span>
+          <a href="#" class="trigger-terms">T&C</a>
+          <span class="sep">|</span>
+          <a href="#" class="trigger-help">FAQ</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ================= DASHBOARD CONTAINER ================= -->
+  <div id="dashboard-container" class="dashboard-wrapper hidden">
+    
+    <!-- Top Horizontal Navigation Bar -->
+    <header class="top-nav">
+      <div class="nav-left">
+        <div class="logo-group">
+          <img src="logo.png" alt="HNX Quantum Logo" class="brand-logo-img-sm" />
+          <span class="brand-logo-text">HNX Quantum</span>
+        </div>
+        <nav class="nav-menu">
+          <a href="#" class="menu-item active" data-view="dashboard">
+            <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
+          </a>
+          <a href="#" class="menu-item" data-view="strategies">
+            <i data-lucide="swatchbook"></i> <span>Strategies</span>
+          </a>
+          <a href="#" class="menu-item" data-view="history">
+            <i data-lucide="history"></i> <span>Order History</span>
+          </a>
+          <a href="#" class="menu-item" data-view="settings">
+            <i data-lucide="settings"></i> <span>Settings</span>
+          </a>
+        </nav>
+      </div>
+      
+      <div class="nav-right">
+        <!-- Connection Status Badge -->
+        <span class="status-pill status-unlinked" id="ip-status-badge">IP Not Assigned</span>
+        <button class="nav-icon-btn"><i data-lucide="bell"></i></button>
+        
+        <div class="avatar-wrapper">
+          <div class="avatar-btn" id="profile-avatar-btn">H</div>
+          
+          <!-- Competitor-style Profile Dropdown Menu -->
+          <div class="profile-dropdown hidden" id="profile-dropdown-menu">
+            <div class="dropdown-section">
+              <span class="section-label">MY PROFILE</span>
+              <h4 id="dropdown-user-name">Harinath Loganathan</h4>
+            </div>
+            <div class="profile-details">
+              <div class="detail-item">
+                <i data-lucide="mail"></i>
+                <span id="dropdown-user-email">harinathl732@gmail.com</span>
+              </div>
+              <div class="detail-item">
+                <i data-lucide="phone"></i>
+                <span id="dropdown-user-phone">8344494987</span>
+              </div>
+            </div>
+            <hr class="dropdown-divider" />
+            <a href="#" class="dropdown-item" id="change-password-trigger">
+              <i data-lucide="key-round"></i> <span>Change Password</span>
+            </a>
+            <a href="#" class="dropdown-item logout" id="logout-btn">
+              <i data-lucide="log-out"></i> <span>Sign Out</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+ 
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- DYNAMIC VIEWS -->
+      <div class="views-container">
+        
+        <!-- 1. DASHBOARD VIEW -->
+        <section id="view-dashboard" class="dashboard-view active-view">
+          
+          <!-- Available Capital & Today's P&L Row -->
+          <div class="summary-cards-row">
+            
+            <!-- Available Capital Card -->
+            <div class="summary-card capital-card">
+              <div class="card-left">
+                <div class="currency-badge">₹</div>
+                <div class="card-text-group">
+                  <span class="card-label">AVAILABLE CAPITAL</span>
+                  <div class="card-value" id="margin-value">₹0.00</div>
+                </div>
+              </div>
+              <button class="btn btn-connect" id="connect-broker-btn">CONNECT</button>
+            </div>
+            
+            <!-- Today's P&L Card -->
+            <div class="summary-card pnl-card">
+              <div class="card-left">
+                <div class="card-text-group">
+                  <span class="card-label">TODAY'S P&L</span>
+                  <div class="card-value text-green" id="live-pnl-value">₹0.00</div>
+                </div>
+              </div>
+              <div class="card-icons">
+                <i data-lucide="refresh-cw" class="icon-sync"></i>
+                <i data-lucide="wifi" class="icon-wifi"></i>
+              </div>
+            </div>
+            
+          </div>
+ 
+          <!-- Portfolio Execution (LIVE) Card -->
+          <div class="premium-card section-card">
+            <div class="card-header">
+              <h2>Portfolio Execution (LIVE)</h2>
+            </div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>S.NO</th>
+                    <th>STRATEGY NAME</th>
+                    <th>O | T | M | POS</th>
+                    <th>STRATEGY PNL</th>
+                  </tr>
+                </thead>
+                <tbody id="execution-table-body">
+                  <tr data-strat="nifty_momentum">
+                    <td>1</td>
+                    <td>Nifty Momentum Option Buyer</td>
+                    <td>1 | 1 | 8000 | 0</td>
+                    <td class="neutral" id="exec-pnl-nifty_momentum">₹0.00</td>
+                  </tr>
+                  <tr data-strat="banknifty_reversal">
+                    <td>2</td>
+                    <td>BankNifty Reversal Option Buyer</td>
+                    <td>1 | 1 | 12000 | 0</td>
+                    <td class="neutral" id="exec-pnl-banknifty_reversal">₹0.00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+ 
+          <!-- Today's Positions Card -->
+          <div class="premium-card section-card">
+            <div class="card-header">
+              <div class="header-left">
+                <h2>Today's Positions</h2>
+                <span class="gold-badge" id="positions-count-badge">0 positions</span>
+              </div>
+              <span class="realtime-indicator">• Realtime P&L</span>
+            </div>
+            
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>STRATEGY / SYMBOL</th>
+                    <th>TYPE</th>
+                    <th>TRADES</th>
+                    <th>AVG BUY</th>
+                    <th>AVG SELL</th>
+                    <th>TOTAL QTY</th>
+                    <th>P&L</th>
+                    <th>STATUS</th>
+                  </tr>
+                </thead>
+                <tbody id="positions-table-body">
+                  <!-- Empty Positions Placeholder -->
+                  <tr id="empty-positions-row">
+                    <td colspan="8" class="empty-state-td">
+                      <div class="empty-state-content">
+                        <i data-lucide="activity" class="pulse-icon"></i>
+                        <h3>No positions yet today</h3>
+                        <p>Positions will appear here as trades are executed</p>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+        </section>
+
+        <!-- 2. STRATEGIES VIEW -->
+        <section id="view-strategies" class="dashboard-view hidden-view">
+          <div class="view-header">
+            <h2>Algorithmic Option Strategies</h2>
+            <p>Deploy low-latency option buying parameters on index momentum changes.</p>
+          </div>
+
+          <div class="strategies-list">
+            <!-- Nifty Momentum Card -->
+            <div class="strategy-card premium-card" id="strat-nifty_momentum">
+              <div class="strat-header">
+                <div>
+                  <span class="index-tag">NIFTY</span>
+                  <h3>Nifty Momentum Option Buyer</h3>
+                </div>
+                <div class="toggle-switch">
+                  <input type="checkbox" id="toggle-nifty_momentum" class="strat-toggle-check" />
+                  <label for="toggle-nifty_momentum"></label>
+                </div>
+              </div>
+              <p>High-frequency momentum buying in Nifty Weekly Options using exponential moving average crossovers.</p>
+              
+              <div class="strat-parameters">
+                <div class="param-row">
+                  <span>Lots Size</span>
+                  <strong class="editable-val" data-field="lot_size">1 Lot (50 Qty)</strong>
+                </div>
+                <div class="param-row">
+                  <span>Multiplier</span>
+                  <strong class="editable-val" data-field="multiplier">1x</strong>
+                </div>
+                <div class="param-row">
+                  <span>MTM Daily Profit Target</span>
+                  <strong class="editable-val text-green" data-field="mtm_max_profit">₹8,000.00</strong>
+                </div>
+                <div class="param-row">
+                  <span>MTM Daily Stop Loss</span>
+                  <strong class="editable-val text-red" data-field="mtm_max_loss">₹3,000.00</strong>
+                </div>
+              </div>
+              <button class="btn btn-secondary btn-block configure-strat-btn" data-strat="nifty_momentum">
+                <i data-lucide="sliders"></i> Adjust Parameters
+              </button>
+            </div>
+
+            <!-- BankNifty Reversal Card -->
+            <div class="strategy-card premium-card" id="strat-banknifty_reversal">
+              <div class="strat-header">
+                <div>
+                  <span class="index-tag">BANKNIFTY</span>
+                  <h3>BankNifty Reversal Option Buyer</h3>
+                </div>
+                <div class="toggle-switch">
+                  <input type="checkbox" id="toggle-banknifty_reversal" class="strat-toggle-check" />
+                  <label for="toggle-banknifty_reversal"></label>
+                </div>
+              </div>
+              <p>Mean reversion options buying strategy analyzing momentum shifts on oversold indices.</p>
+              
+              <div class="strat-parameters">
+                <div class="param-row">
+                  <span>Lots Size</span>
+                  <strong class="editable-val" data-field="lot_size">1 Lot (15 Qty)</strong>
+                </div>
+                <div class="param-row">
+                  <span>Multiplier</span>
+                  <strong class="editable-val" data-field="multiplier">1x</strong>
+                </div>
+                <div class="param-row">
+                  <span>MTM Daily Profit Target</span>
+                  <strong class="editable-val text-green" data-field="mtm_max_profit">₹12,000.00</strong>
+                </div>
+                <div class="param-row">
+                  <span>MTM Daily Stop Loss</span>
+                  <strong class="editable-val text-red" data-field="mtm_max_loss">₹5,000.00</strong>
+                </div>
+              </div>
+              <button class="btn btn-secondary btn-block configure-strat-btn" data-strat="banknifty_reversal">
+                <i data-lucide="sliders"></i> Adjust Parameters
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. ORDER HISTORY VIEW -->
+        <section id="view-history" class="dashboard-view hidden-view">
+          <div class="view-header">
+            <h2>Execution & Order Ledger</h2>
+            <p>Complete historical logs of orders executed on your linked broker account.</p>
+          </div>
+          
+          <div class="premium-card">
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Strategy</th>
+                    <th>Instrument</th>
+                    <th>Type</th>
+                    <th>Quantity</th>
+                    <th>Avg Price</th>
+                    <th>P&L</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="history-table-body">
+                  <tr>
+                    <td colspan="8" class="text-center">No trades executed today yet.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+ 
+        <!-- 5. SETTINGS VIEW -->
+        <section id="view-settings" class="dashboard-view hidden-view">
+          <div class="settings-page-header">
+            <h2>Settings</h2>
+            <p>Manage your broker accounts and security preferences.</p>
+          </div>
+
+          <div class="settings-stack">
+
+            <!-- Card 1: API Credentials -->
+            <div class="settings-card">
+              <div class="settings-card-title-row">
+                <span class="settings-card-icon">🔑</span>
+                <div>
+                  <h3>API Credentials</h3>
+                  <p class="settings-card-sub">Your Zerodha Kite Connect API keys.</p>
+                </div>
+              </div>
+
+              <form id="broker-creds-form" class="settings-form-body">
+                <div class="input-group">
+                  <label for="api-key">API KEY</label>
+                  <input type="text" id="api-key" required placeholder="Enter your Kite API Key" />
+                </div>
+                <div class="input-group">
+                  <label for="api-secret">API SECRET</label>
+                  <div class="password-wrapper">
+                    <input type="password" id="api-secret" required placeholder="••••••••••••" />
+                    <button type="button" class="eye-toggle"><i data-lucide="eye"></i></button>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-save-creds btn-block">
+                  <i data-lucide="save"></i> Save Credentials
+                </button>
+              </form>
+            </div>
+
+            <!-- Card 2: Broker Connectivity -->
+            <div class="settings-card">
+              <div class="settings-card-title-row">
+                <span class="settings-card-icon broker-icon">🛡️</span>
+                <div>
+                  <h3>Broker Connectivity</h3>
+                  <p class="settings-card-sub">Connect to Indian exchanges via Zerodha Kite.</p>
+                </div>
+              </div>
+
+              <div class="broker-connect-row">
+                <div class="broker-identity">
+                  <div class="broker-logo-wrap">
+                    <svg viewBox="0 0 36 36" fill="none" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="18" cy="18" r="18" fill="#e74c3c"/>
+                      <path d="M10 22 L18 10 L26 22 Z" fill="white" opacity="0.9"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="broker-name-label">Zerodha Kite</span>
+                    <span class="broker-sub-label">Required for trading NFO/MCX instruments.</span>
+                  </div>
+                </div>
+                <button id="authorize-broker-btn" class="btn btn-broker-connect" disabled>
+                  <i data-lucide="link"></i> Save Credentials First
+                </button>
+              </div>
+
+              <div class="session-note">
+                <i data-lucide="info"></i>
+                <span>
+                  <strong>Note:</strong> Zerodha sessions expire every day at morning. You need to re-login once per day to enable automated trading.
+                  <br/><span class="session-note-highlight">Must login daily from 8:50 AM to 9:10 AM only.</span>
+                </span>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+      <footer class="app-footer">
+        <p>© 2026 HNX Quantum. All rights reserved.</p>
+      </footer>
+    </main>
+  </div>
+
+  <!-- ================= RISK LIMIT MODAL ================= -->
+  <div id="risk-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>Adjust Risk Parameters</h2>
+        <button id="close-modal-btn" class="modal-close">&times;</button>
+      </div>
+      <form id="risk-settings-form">
+        <input type="hidden" id="modal-strat-id" />
+        
+        <div class="input-group">
+          <label for="modal-lot-size">Trading Lot Size</label>
+          <input type="number" id="modal-lot-size" min="1" required />
+        </div>
+        
+        <div class="input-group">
+          <label for="modal-multiplier">Position Multiplier</label>
+          <input type="number" id="modal-multiplier" min="1" required />
+        </div>
+        
+        <div class="input-group">
+          <label for="modal-max-profit">MTM Daily Target Profit (₹)</label>
+          <input type="number" id="modal-max-profit" min="1" required />
+        </div>
+        
+        <div class="input-group">
+          <label for="modal-max-loss">MTM Daily Stop Loss Limit (₹)</label>
+          <input type="number" id="modal-max-loss" min="1" required />
+        </div>
+        
+        <button type="submit" class="btn btn-primary btn-block">
+          <i data-lucide="check"></i> Apply Parameters
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= CHANGE PASSWORD MODAL ================= -->
+  <div id="change-password-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>Change Password</h2>
+        <button id="close-change-pass-btn" class="modal-close">&times;</button>
+      </div>
+      <form id="change-password-form">
+        
+        <div class="input-group">
+          <label for="change-curr-password">Current Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="change-curr-password" required placeholder="••••••••••••" />
+            <button type="button" class="eye-toggle"><i data-lucide="eye"></i></button>
+          </div>
+        </div>
+        
+        <div class="input-group">
+          <label for="change-new-password">New Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="change-new-password" required placeholder="••••••••••••" />
+            <button type="button" class="eye-toggle"><i data-lucide="eye"></i></button>
+          </div>
+          <!-- Live Password Validation Rules UI -->
+          <div id="change-pass-validation-rules" class="validation-rules">
+            <p id="change-rule-length" class="invalid">❌ Minimum 8 characters</p>
+            <p id="change-rule-number" class="invalid">❌ At least 1 number</p>
+            <p id="change-rule-special" class="invalid">❌ At least 1 special character</p>
+          </div>
+        </div>
+        
+        <div class="input-group">
+          <label for="change-conf-password">Confirm New Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="change-conf-password" required placeholder="••••••••••••" />
+            <button type="button" class="eye-toggle"><i data-lucide="eye"></i></button>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary btn-block">
+          <i data-lucide="check"></i> Update Password
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Notification Banner -->
+  <div id="notification-toast" class="toast hidden"></div>
+
+  <!-- ================= 1. PRIVACY POLICY MODAL ================= -->
+  <div id="privacy-modal" class="modal-backdrop hidden">
+    <div class="modal-card legal-modal">
+      <div class="modal-header">
+        <h2>HNX Quantum - Privacy Policy</h2>
+        <button id="close-privacy-btn" class="modal-close">&times;</button>
+      </div>
+      <div class="legal-content">
+        <h3>1. Data We Collect</h3>
+        <p>We do not collect or monitor your live trading strategy settings or positions. The platform operates on user-controlled REST API mappings.</p>
+        
+        <h3>2. Broker Secret Security</h3>
+        <p>All API secret keys and session tokens are encrypted at the database column level utilizing advanced **AES-256-GCM** algorithms. No credentials are stored in unencrypted plain text.</p>
+        
+        <h3>3. Activity Logging</h3>
+        <p>We keep temporary performance logs strictly to show live P&L data curves inside your local dashboard views.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 2. TERMS & CONDITIONS MODAL ================= -->
+  <div id="terms-modal" class="modal-backdrop hidden">
+    <div class="modal-card legal-modal">
+      <div class="modal-header">
+        <h2>Terms & Conditions</h2>
+        <button id="close-terms-btn" class="modal-close">&times;</button>
+      </div>
+      <div class="legal-content">
+        <h3>1. No Investment Advice</h3>
+        <p>HNX Quantum is an automated software utility provider. We are not SEBI-registered advisors and do not offer customized financial consulting or portfolio advisory services.</p>
+        
+        <h3>2. Execution & Network Liability</h3>
+        <p>Algorithmic order execution is subject to third-party broker API uptimes, network latency, and exchange-level outages. We bear no liability for capital losses incurred due to delayed session responses or connectivity timeouts.</p>
+        
+        <h3>3. Automated Stop Limits</h3>
+        <p>Users fully acknowledge that daily MTM Guards are executed based on active background loop checks. Slippage during high-volatility events may cause real execution limits to differ slightly from target thresholds.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 3. HELP HUB FAQ MODAL ================= -->
+  <div id="help-modal" class="modal-backdrop hidden">
+    <div class="modal-card legal-modal">
+      <div class="modal-header">
+        <h2>Help Hub & Support FAQ</h2>
+        <button id="close-help-btn" class="modal-close">&times;</button>
+      </div>
+      <div class="legal-content">
+        <div class="faq-item">
+          <h4>Q: How do I configure my Zerodha credentials?</h4>
+          <p>Go to the **Settings** tab. Paste your developer API Key and API Secret from your Kite Console. Link daily by clicking **Authenticate Session**.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q: How does the MTM Guard work?</h4>
+          <p>The MTM Guard checks your open P&L every second. If your net profit reaches your daily target, or your net loss breaches your stop limit, it forcefully triggers reversing market exit orders to secure remaining premiums.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Q: Can I run backtests first?</h4>
+          <p>Yes. If your FastAPI server is offline, HNX Quantum launches in local offline simulator mode so you can preview strategy behaviors completely risk-free.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Support Action Button -->
+  <button class="support-float-btn" id="support-trigger">
+    <i data-lucide="headphones"></i>
+  </button>
+
+  <!-- Auth-only Javascript (no shared app.js needed here) -->
+  <script>
+    const API_BASE = `http://${window.location.hostname || "localhost"}:8000`;
+    let apiConnected = false;
+
+    // If already logged in, go straight to dashboard
+    if (localStorage.getItem("token")) {
+      window.location.href = "dashboard.html";
+    }
+
+    async function checkAPI() {
+      try {
+        const r = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(2000) });
+        if (r.ok) apiConnected = true;
+      } catch { apiConnected = false; }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("notification-toast");
+      if (!t) return;
+      t.innerText = msg;
+      t.classList.remove("hidden");
+      setTimeout(() => t.classList.add("hidden"), 3000);
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+      await checkAPI();
+
+      // Eye toggles
+      document.querySelectorAll(".eye-toggle").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const inp = btn.previousElementSibling;
+          if (!inp) return;
+          inp.type = inp.type === "password" ? "text" : "password";
+          btn.innerHTML = inp.type === "password" ? '<i data-lucide="eye"></i>' : '<i data-lucide="eye-off"></i>';
+          if (typeof lucide !== 'undefined') lucide.createIcons();
+        });
+      });
+
+      // Form nav
+      document.getElementById("to-register")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        document.querySelectorAll(".auth-form").forEach(f => f.classList.remove("active"));
+        document.getElementById("register-form").classList.add("active");
+      });
+      document.getElementById("to-login")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        document.querySelectorAll(".auth-form").forEach(f => f.classList.remove("active"));
+        document.getElementById("login-form").classList.add("active");
+      });
+      document.getElementById("to-forgot")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        document.querySelectorAll(".auth-form").forEach(f => f.classList.remove("active"));
+        document.getElementById("forgot-form").classList.add("active");
+      });
+      document.getElementById("forgot-to-login")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        document.querySelectorAll(".auth-form").forEach(f => f.classList.remove("active"));
+        document.getElementById("login-form").classList.add("active");
+      });
+
+      // Nav buttons
+      document.getElementById("nav-login-btn")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        document.querySelectorAll(".auth-form").forEach(f => f.classList.remove("active"));
+        document.getElementById("login-form").classList.add("active");
+      });
+      document.getElementById("nav-signup-btn")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        document.querySelectorAll(".auth-form").forEach(f => f.classList.remove("active"));
+        document.getElementById("register-form").classList.add("active");
+      });
+
+      // Modals
+      document.querySelectorAll(".trigger-privacy, #nav-privacy").forEach(el =>
+        el.addEventListener("click", (e) => { e.preventDefault(); document.getElementById("privacy-modal")?.classList.remove("hidden"); }));
+      document.getElementById("close-privacy-btn")?.addEventListener("click", () =>
+        document.getElementById("privacy-modal")?.classList.add("hidden"));
+
+      document.querySelectorAll(".trigger-terms, #nav-terms").forEach(el =>
+        el.addEventListener("click", (e) => { e.preventDefault(); document.getElementById("terms-modal")?.classList.remove("hidden"); }));
+      document.getElementById("close-terms-btn")?.addEventListener("click", () =>
+        document.getElementById("terms-modal")?.classList.add("hidden"));
+
+      document.querySelectorAll(".trigger-help, #nav-help, #nav-features, #nav-strategies, #learn-more-trigger").forEach(el =>
+        el.addEventListener("click", (e) => { e.preventDefault(); document.getElementById("help-modal")?.classList.remove("hidden"); }));
+      document.getElementById("close-help-btn")?.addEventListener("click", () =>
+        document.getElementById("help-modal")?.classList.add("hidden"));
+
+      // ---- LOGIN ----
+      document.getElementById("login-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email    = document.getElementById("login-email").value;
+        const password = document.getElementById("login-password").value;
+
+        if (apiConnected) {
+          try {
+            const form = new URLSearchParams();
+            form.append("username", email);
+            form.append("password", password);
+            const res = await fetch(`${API_BASE}/auth/token`, { method: "POST", body: form });
+            if (res.ok) {
+              const data = await res.json();
+              localStorage.setItem("token", data.access_token);
+              localStorage.setItem("user_email", email);
+              window.location.href = "dashboard.html";
+            } else {
+              const err = await res.json();
+              showToast(err.detail || "Login failed");
+            }
+          } catch { showToast("Server connection failed"); }
+        } else {
+          // Simulator bypass
+          localStorage.setItem("token", "mock_token_" + Date.now());
+          localStorage.setItem("user_email", email);
+          window.location.href = "dashboard.html";
+        }
+      });
+
+      // ---- REGISTER ----
+      // Password strength live validation
+      const regPass = document.getElementById("reg-password");
+      if (regPass) {
+        regPass.addEventListener("input", () => {
+          const v = regPass.value;
+          setRule("rule-length",  v.length >= 8,                          "Minimum 8 characters");
+          setRule("rule-number",  /\d/.test(v),                           "At least 1 number");
+          setRule("rule-special", /[!@#$%^&*(),.?":{}|<>]/.test(v),       "At least 1 special character");
+        });
+      }
+
+      document.getElementById("register-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const fullName = document.getElementById("reg-name").value;
+        const email    = document.getElementById("reg-email").value;
+        const phone    = document.getElementById("reg-phone").value;
+        const password = document.getElementById("reg-password").value;
+
+        if (password.length < 8 || !/\d/.test(password) || !/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+          showToast("Please meet all password requirements!"); return;
+        }
+
+        if (apiConnected) {
+          try {
+            const res = await fetch(`${API_BASE}/auth/register`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, full_name: fullName, mobile_no: phone, password })
+            });
+            if (res.ok) {
+              showToast("Account created! You can now log in.");
+              document.querySelectorAll(".auth-form").forEach(f => f.classList.remove("active"));
+              document.getElementById("login-form").classList.add("active");
+              document.getElementById("login-email").value = email;
+            } else {
+              const err = await res.json();
+              showToast(err.detail || "Registration failed");
+            }
+          } catch { showToast("Server connection failed"); }
+        } else {
+          showToast("Simulator: Account created! Please log in.");
+          document.querySelectorAll(".auth-form").forEach(f => f.classList.remove("active"));
+          document.getElementById("login-form").classList.add("active");
+          document.getElementById("login-email").value = email;
+        }
+      });
+
+      // ---- FORGOT PASSWORD ----
+      document.getElementById("forgot-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("forgot-email").value;
+        if (apiConnected) {
+          try {
+            const res = await fetch(`${API_BASE}/auth/forgot-password/send-otp?email=${email}`, { method: "POST" });
+            if (res.ok) { showToast("OTP sent to registered email!"); }
+            else { const err = await res.json(); showToast(err.detail || "Email not found"); }
+          } catch { showToast("Server error."); }
+        } else { showToast("Simulator: OTP sent!"); }
+        document.querySelectorAll(".auth-form").forEach(f => f.classList.remove("active"));
+        document.getElementById("login-form").classList.add("active");
+      });
+    });
+
+    function setRule(id, pass, label) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.className = pass ? "valid" : "invalid";
+      el.innerHTML = (pass ? "✓ " : "❌ ") + label;
+    }
+  </script>
+</body>
+</html>

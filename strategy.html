@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HNX Quantum | Strategies</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js CDN for Dynamic Performance Statistics Modal -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Premium Statistics Button Styling */
+    .statistics-btn {
+      border: 1px solid rgba(129, 140, 248, 0.3);
+      background: rgba(129, 140, 248, 0.08);
+      color: #818cf8;
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .statistics-btn:hover {
+      background: rgba(129, 140, 248, 0.15);
+      border-color: rgba(129, 140, 248, 0.5);
+      box-shadow: 0 0 10px rgba(129, 140, 248, 0.15);
+    }
+    
+    /* Textarea Custom Styling */
+    .custom-textarea {
+      background: rgba(5, 6, 15, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      color: #fff;
+      width: 100%;
+      padding: 10px;
+      font-family: sans-serif;
+      resize: vertical;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .custom-textarea:focus {
+      border-color: #ff9f00;
+    }
+
+    /* Tab styles overrides inside stats modal */
+    .stats-tab-btn {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.6);
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .stats-tab-btn:hover {
+      color: #fff;
+    }
+    .stats-tab-btn.active {
+      color: #05060f;
+      background: #00ff87;
+      font-weight: 600;
+      box-shadow: 0 0 10px rgba(0, 255, 135, 0.2);
+    }
+    
+    /* Segmented Control Styling */
+    .segmented-control {
+      display: flex;
+      background: rgba(5, 6, 15, 0.6);
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      width: 100%;
+      gap: 4px;
+      margin-top: 4px;
+    }
+    .segment-btn {
+      flex: 1;
+      text-align: center;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.6);
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .segment-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.03);
+    }
+    input[type="radio"]:checked + .segment-btn {
+      background: #ff9f00;
+      color: #05060f;
+      font-weight: 600;
+      box-shadow: 0 0 10px rgba(255, 159, 0, 0.25);
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow bg-cyan"></div>
+  <div class="ambient-glow bg-purple"></div>
+
+  <div id="sidebar-overlay" class="sidebar-overlay hidden"></div>
+  <nav id="sidebar-drawer" class="sidebar-drawer">
+    <div class="sidebar-header">
+      <div class="sidebar-logo"><img src="logo.png" alt="HNX" class="brand-logo-img-sm" /><span>HNX Quantum</span></div>
+      <button id="close-sidebar-btn" class="sidebar-close-btn"><i data-lucide="x">✕</i></button>
+    </div>
+    <ul class="sidebar-nav-list">
+      <li><a href="dashboard.html" class="sidebar-link" data-page="dashboard"><i data-lucide="layout-dashboard">📊</i><span>Dashboard</span></a></li>
+      <li><a href="strategy.html" class="sidebar-link" data-page="strategy"><i data-lucide="trending-up">📈</i><span>Strategies</span></a></li>
+      <li><a href="order-history.html" class="sidebar-link" data-page="history"><i data-lucide="history">⏳</i><span>Order History</span></a></li>
+      <li><a href="settings.html" class="sidebar-link" data-page="settings"><i data-lucide="settings">⚙️</i><span>Settings</span></a></li>
+    </ul>
+    <div class="sidebar-footer-actions">
+      <button id="sidebar-logout-btn" class="sidebar-logout-btn"><i data-lucide="log-out">🚪</i><span>Sign Out</span></button>
+    </div>
+  </nav>
+
+  <header class="top-bar">
+    <button id="hamburger-btn" class="hamburger-btn"><i data-lucide="menu">☰</i></button>
+    <div class="top-bar-logo">
+      <img src="logo.png" alt="HNX Quantum" class="brand-logo-img-sm" />
+      <span class="brand-logo-text">HNX Quantum</span>
+    </div>
+    <div class="top-bar-right">
+      <span class="status-pill status-unlinked" id="ip-status-badge">IP Not Assigned</span>
+      <button class="nav-icon-btn"><i data-lucide="bell">🔔</i></button>
+      <div class="avatar-wrapper">
+        <div class="avatar-btn" id="profile-avatar-btn">H</div>
+        <div class="profile-dropdown hidden" id="profile-dropdown-menu">
+          <div class="dropdown-section"><span class="section-label">MY PROFILE</span><h4 id="dropdown-user-name">Trader</h4></div>
+          <div class="profile-details">
+            <div class="detail-item"><i data-lucide="mail">✉️</i><span id="dropdown-user-email">-</span></div>
+            <div class="detail-item"><i data-lucide="phone">📞</i><span id="dropdown-user-phone">-</span></div>
+          </div>
+          <hr class="dropdown-divider" />
+          <a href="#" class="dropdown-item" id="change-password-trigger"><i data-lucide="key-round">🔑</i><span>Change Password</span></a>
+          <a href="#" class="dropdown-item logout" id="logout-btn"><i data-lucide="log-out">🚪</i><span>Sign Out</span></a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    <main class="page-content">
+      <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+        <div>
+          <h1>Algorithmic Strategies</h1>
+          <p>Enable and configure your automated option buying algorithms.</p>
+        </div>
+        <button class="btn btn-primary" id="open-create-strat-btn" style="padding: 10px 20px; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+          <i data-lucide="plus-circle"></i> Create Strategy
+        </button>
+      </div>
+
+      <div class="strategies-list" id="strategies-container">
+        <!-- Dynamically rendered strategies -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Create Custom Strategy Modal -->
+  <div id="create-strat-modal" class="modal-backdrop hidden">
+    <div class="modal-card" style="max-width: 600px;">
+      <div class="modal-header">
+        <h2 id="modal-title-text">Create Custom Strategy</h2>
+        <button id="close-create-modal-btn" class="modal-close" onclick="document.getElementById('create-strat-modal').classList.add('hidden')">&times;</button>
+      </div>
+      <form id="create-strategy-form" style="max-height: 75vh; overflow-y: auto; padding-right: 8px; text-align: left;">
+        <input type="hidden" id="edit-strat-id" value="" />
+        <div class="input-group">
+          <label>Strategy Name</label>
+          <input type="text" id="new-strat-name" required placeholder="e.g. Algo version of time formula 35pts" />
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="input-group">
+            <label>Underlying Instrument</label>
+            <select id="new-strat-underlying" required>
+              <option value="NIFTY">Nifty</option>
+              <option value="BANKNIFTY">BankNifty</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Order Type</label>
+            <select id="new-strat-ordertype" required>
+              <option value="MIS">MIS (Intraday)</option>
+              <option value="NRML">NRML (Delivery)</option>
+            </select>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="input-group">
+            <label>Option Contracts</label>
+            <select id="new-strat-contracts" required>
+              <option value="Current Week">Current Week</option>
+              <option value="Next Week">Next Week</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Timeframe</label>
+            <select id="new-strat-timeframe" required>
+              <option value="1 Min">1 Min</option>
+              <option value="5 Min">5 Min</option>
+              <option value="15 Min">15 Min</option>
+            </select>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="input-group">
+            <label>Trading Lot Size</label>
+            <select id="new-strat-lot-size" required>
+              <!-- 1 to 30 options -->
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Entry Timing</label>
+            <input type="time" id="new-strat-entrytime" value="09:17" required />
+          </div>
+        </div>
+        
+        <!-- Stop Loss Mode Segmented Control -->
+        <div class="input-group">
+          <label>Stop Loss Mode (Candle-Close Based)</label>
+          <div class="segmented-control">
+            <input type="radio" id="sl-mode-default" name="new-strat-sl-mode" value="Default (15 pts)" checked style="display: none;" />
+            <label for="sl-mode-default" class="segment-btn">Default (15 pts)</label>
+            <input type="radio" id="sl-mode-alt" name="new-strat-sl-mode" value="Alternative (20 pts)" style="display: none;" />
+            <label for="sl-mode-alt" class="segment-btn">Alternative (20 pts)</label>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="input-group">
+            <label>Target Points</label>
+            <input type="number" id="new-strat-target" min="1" value="35" required />
+          </div>
+          <div class="input-group">
+            <label>Trailing Breakeven Trigger (pts)</label>
+            <input type="number" id="new-strat-trailing" min="1" value="30" required />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="input-group">
+            <label>Martingale Qty Cap (lots)</label>
+            <select id="new-strat-martingale-cap" required>
+              <option value="1">1 Lot (No scaling)</option>
+              <option value="2">2 Lots</option>
+              <option value="3">3 Lots</option>
+              <option value="4">4 Lots</option>
+              <option value="5" selected>5 Lots (Default)</option>
+              <option value="6">6 Lots</option>
+              <option value="7">7 Lots</option>
+              <option value="8">8 Lots</option>
+              <option value="9">9 Lots</option>
+              <option value="10">10 Lots (Max)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Minimum Capital Needed (₹)</label>
+            <input type="number" id="new-strat-capital" min="1000" value="80000" required />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="input-group">
+            <label>Daily MTM Profit Limit (₹)</label>
+            <input type="number" id="new-strat-mtm-profit" min="100" value="8000" required />
+          </div>
+          <div class="input-group">
+            <label>Daily MTM Loss Limit (₹)</label>
+            <input type="number" id="new-strat-mtm-loss" min="100" value="3000" required />
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Logic Description & Rules</label>
+          <textarea id="new-strat-rules" rows="3" class="custom-textarea" placeholder="e.g. Max 2 Trades Per Side PE/CE. 30 Points Reach SL Shift To BE. SL Hit Next Entry Lot Size Multiple."></textarea>
+        </div>
+        <button type="submit" id="submit-btn-text" class="btn btn-primary btn-block" style="margin-top: 1rem;"><i data-lucide="plus-circle"></i> Create Strategy</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Performance Statistics Modal (Direct Screenshot Replication) -->
+  <div id="stats-modal" class="modal-backdrop hidden">
+    <div class="modal-card" style="max-width: 620px; width: calc(100% - 24px); background: #ffffff; color: #202124; border: none; box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25); border-radius: 12px; text-align: left; padding: 1.5rem;">
+      
+      <!-- Modal Header -->
+      <div class="modal-header" style="border-bottom: 1px solid #dadce0; padding-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <div style="background: #e8f0fe; color: #1a73e8; padding: 6px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center;">
+            <i data-lucide="bar-chart-2" style="width: 20px; height: 20px; color: #1a73e8;"></i>
+          </div>
+          <div>
+            <h2 style="font-size: 1.15rem; font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #202124;">Performance Statistics</h2>
+            <p style="font-size: 0.75rem; color: #5f6368; margin-top: 2px;" id="stats-modal-subtitle">March 2026 - Today</p>
+          </div>
+        </div>
+        <button id="close-stats-modal-btn" class="modal-close" style="color: #5f6368; font-size: 1.5rem; background: none; border: none; cursor: pointer; line-height: 1;" onclick="document.getElementById('stats-modal').classList.add('hidden')">&times;</button>
+      </div>
+
+      <div class="stats-modal-body" style="max-height: 70vh; overflow-y: auto; padding-right: 2px;">
+        
+        <!-- PnL Growth Card -->
+        <div style="background: #ffffff; border: 1px solid #dadce0; border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+              <div style="font-size: 0.7rem; color: #5f6368; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">MARCH TO TODAY</div>
+              <h3 style="font-size: 0.95rem; font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #202124;">PnL Growth (on Required Capital)</h3>
+            </div>
+            <div style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;">
+              <span class="status-badge" style="background: #e8f0fe; color: #1a73e8; font-size: 0.72rem; padding: 3px 8px; border: none; font-weight: 600; border-radius: 20px;" id="stats-modal-capital">Capital ₹80,000</span>
+              <span class="status-badge" style="background: #f1f3f4; color: #5f6368; font-size: 0.72rem; padding: 3px 8px; border: 1px solid #dadce0; font-weight: 500; border-radius: 20px;">02 Mar - 22 May</span>
+              <span class="status-badge" style="background: #fce8e6; color: #d93025; font-size: 0.72rem; padding: 3px 8px; border: none; font-weight: 600; border-radius: 20px;" id="stats-modal-pnl-summary">Today -₹6,156 (-7.69%)</span>
+            </div>
+          </div>
+          <!-- Chart Canvas -->
+          <div style="position: relative; height: 180px; width: 100%; background: #ffffff; border-radius: 8px; padding: 10px;">
+            <canvas id="pnl-growth-chart"></canvas>
+          </div>
+        </div>
+
+        <!-- Cumulative Performance Grid -->
+        <div style="font-size: 0.7rem; color: #5f6368; font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 0.05em;">CUMULATIVE PERFORMANCE TILL TODAY</div>
+        
+        <div class="stats-grid">
+          <div style="background: #fce8e6; border: 1px solid #fad2cf; border-radius: 8px; padding: 0.75rem; min-height: 65px; display: flex; flex-direction: column; justify-content: center;">
+            <div style="font-size: 0.68rem; color: #c5221f; font-weight: 600; text-transform: uppercase;">TOTAL P&L</div>
+            <div style="font-size: 1.2rem; font-family: 'Space Grotesk', sans-serif; font-weight: 700; margin-top: 2px; color: #d93025;" id="stats-modal-total-pnl">-₹6,156</div>
+          </div>
+          <div style="background: #ffffff; border: 1px solid #dadce0; border-radius: 8px; padding: 0.75rem; min-height: 65px; display: flex; flex-direction: column; justify-content: center;">
+            <div style="font-size: 0.68rem; color: #5f6368; font-weight: 600; text-transform: uppercase;">WIN RATE</div>
+            <div style="font-size: 1.2rem; font-family: 'Space Grotesk', sans-serif; font-weight: 700; margin-top: 2px; color: #137333;" id="stats-modal-win-rate">60%</div>
+          </div>
+          <div style="background: #ffffff; border: 1px solid #dadce0; border-radius: 8px; padding: 0.75rem; min-height: 65px; display: flex; flex-direction: column; justify-content: center;">
+            <div style="font-size: 0.68rem; color: #5f6368; font-weight: 600; text-transform: uppercase;">AVG DAILY</div>
+            <div style="font-size: 1.2rem; font-family: 'Space Grotesk', sans-serif; font-weight: 700; margin-top: 2px; color: #d93025;" id="stats-modal-avg-daily">-₹103</div>
+          </div>
+          <div style="background: #ffffff; border: 1px solid #dadce0; border-radius: 8px; padding: 0.75rem; min-height: 65px; display: flex; flex-direction: column; justify-content: center;">
+            <div style="font-size: 0.68rem; color: #5f6368; font-weight: 600; text-transform: uppercase;">TRADING DAYS</div>
+            <div style="font-size: 1.2rem; font-family: 'Space Grotesk', sans-serif; font-weight: 700; margin-top: 2px; color: #202124;" id="stats-modal-trading-days">60</div>
+          </div>
+        </div>
+
+        <div class="stats-sub-grid">
+          <div style="background: #e6f4ea; border: 1px solid #ceead6; border-radius: 8px; padding: 0.6rem 0.75rem; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.75rem; color: #137333; display:flex; align-items:center; gap:4px; font-weight: 600;"><i data-lucide="arrow-up-right" style="width:14px; height:14px; color:#137333;"></i> Best Day</span>
+            <span style="font-size: 0.85rem; font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #137333;" id="stats-modal-best-day">+₹4,911</span>
+          </div>
+          <div style="background: #fce8e6; border: 1px solid #fad2cf; border-radius: 8px; padding: 0.6rem 0.75rem; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.75rem; color: #c5221f; display:flex; align-items:center; gap:4px; font-weight: 600;"><i data-lucide="arrow-down-right" style="width:14px; height:14px; color:#c5221f;"></i> Worst Day</span>
+            <span style="font-size: 0.85rem; font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #c5221f;" id="stats-modal-worst-day">-₹10,231</span>
+          </div>
+        </div>
+
+        <div class="stats-badges-row">
+          <span class="status-badge" style="background: #e6f4ea; color: #137333; font-size: 0.72rem; padding: 4px 12px; border: none; font-weight: 600; border-radius: 20px;" id="stats-modal-profit-days">6 Profit Days</span>
+          <span class="status-badge" style="background: #fce8e6; color: #d93025; font-size: 0.72rem; padding: 4px 12px; border: none; font-weight: 600; border-radius: 20px;" id="stats-modal-loss-days">4 Loss Days</span>
+          <span class="status-badge" style="background: #fef7e0; color: #b06000; font-size: 0.72rem; padding: 4px 12px; border: none; font-weight: 600; border-radius: 20px;" id="stats-modal-max-dd">Max DD: -₹13,868</span>
+        </div>
+
+        <!-- Inner Toggle Switch tabs matching screenshot -->
+        <div style="display: flex; background: #f1f3f4; padding: 3px; border-radius: 8px; border: 1px solid #dadce0; margin-bottom: 1rem;">
+          <button id="tab-monthly-btn" class="stats-tab-btn active" style="flex: 1; text-align: center;" onclick="toggleInnerStatsTab('monthly')">Monthly Summary</button>
+          <button id="tab-daily-btn" class="stats-tab-btn" style="flex: 1; text-align: center;" onclick="toggleInnerStatsTab('daily')">Daily Breakdown</button>
+        </div>
+
+        <!-- Tab 1: Monthly Summary -->
+        <div id="stats-monthly-view" class="table-container" style="margin-bottom: 1rem; border:1px solid #dadce0; border-radius:8px; background:#ffffff; overflow:hidden;">
+          <table style="font-size: 0.8rem; width:100%; border-collapse:collapse;">
+            <thead>
+              <tr style="background:#f8f9fa; border-bottom:1px solid #dadce0;">
+                <th style="color:#5f6368; font-weight:600; padding:8px 12px;">MONTH</th>
+                <th style="color:#5f6368; font-weight:600; padding:8px 12px;">P&amp;L</th>
+                <th style="color:#5f6368; font-weight:600; padding:8px 12px;">WIN RATE</th>
+                <th style="color:#5f6368; font-weight:600; padding:8px 12px;">DAYS</th>
+              </tr>
+            </thead>
+            <tbody id="stats-monthly-body" style="color:#202124;">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tab 2: Daily Breakdown -->
+        <div id="stats-daily-view" class="table-container hidden" style="margin-bottom: 1rem; max-height: 180px; overflow-y: auto; border:1px solid #dadce0; border-radius:8px; background:#ffffff;">
+          <table style="font-size: 0.8rem; width:100%; border-collapse:collapse;">
+            <thead>
+              <tr style="background:#f8f9fa; border-bottom:1px solid #dadce0;">
+                <th style="color:#5f6368; font-weight:600; padding:8px 12px;">DATE</th>
+                <th style="color:#5f6368; font-weight:600; padding:8px 12px;">P&amp;L</th>
+              </tr>
+            </thead>
+            <tbody id="stats-daily-body" style="color:#202124;">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Disclaimer -->
+        <div style="font-size: 0.65rem; color: #5f6368; text-align: center; border-top: 1px solid #dadce0; padding-top: 0.75rem; margin-top: 0.75rem; line-height: 1.4;">
+          Statistics from March 2026 through today, based on daily 1 lot (85 qty) P&amp;L. Past performance does not guarantee future results.
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Risk Parameter Modal (Invisible in general view since Adjust button is replaced by STATS) -->
+  <div id="risk-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>Adjust Risk Parameters</h2>
+        <button id="close-modal-btn" class="modal-close">&times;</button>
+      </div>
+      <form id="risk-settings-form">
+        <input type="hidden" id="modal-strat-id" />
+        <div class="input-group">
+          <label>Trading Lot Size</label>
+          <select id="modal-lot-size" required></select>
+        </div>
+        <div class="input-group"><label>MTM Daily Target Profit (₹)</label><input type="number" id="modal-max-profit" min="1" required /></div>
+        <div class="input-group"><label>MTM Daily Stop Loss Limit (₹)</label><input type="number" id="modal-max-loss" min="1" required /></div>
+        <button type="submit" class="btn btn-primary btn-block"><i data-lucide="check"></i> Apply Parameters</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div id="change-password-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header"><h2>Change Password</h2><button id="close-change-pass-btn" class="modal-close">&times;</button></div>
+      <form id="change-password-form">
+        <div class="input-group"><label>Current Password</label><div class="password-wrapper"><input type="password" id="change-curr-password" required placeholder="••••••••••••" /><button type="button" class="eye-toggle"><i data-lucide="eye"></i></button></div></div>
+        <div class="input-group"><label>New Password</label><div class="password-wrapper"><input type="password" id="change-new-password" required placeholder="••••••••••••" /><button type="button" class="eye-toggle"><i data-lucide="eye"></i></button></div><div class="validation-rules"><p id="change-rule-length" class="invalid">❌ Minimum 8 characters</p><p id="change-rule-number" class="invalid">❌ At least 1 number</p><p id="change-rule-special" class="invalid">❌ At least 1 special character</p></div></div>
+        <div class="input-group"><label>Confirm New Password</label><div class="password-wrapper"><input type="password" id="change-conf-password" required placeholder="••••••••••••" /><button type="button" class="eye-toggle"><i data-lucide="eye"></i></button></div></div>
+        <button type="submit" class="btn btn-primary btn-block"><i data-lucide="check"></i> Update Password</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="notification-toast" class="toast hidden"></div>
+  <button class="support-float-btn"><i data-lucide="headphones"></i></button>
+
+  <script src="app.js"></script>
+  <script>
+    const CATALOG = {
+      time_formula_35pts: { 
+        name: 'Algo version of Nifty Time Formula Breakout Strategy (9:16)', 
+        index: 'NIFTY', 
+        color: '#ff9f00', 
+        desc: 'At 9:16 AM, identify ATM CE/PE and mark the 1-Min Close. Breakout confirmation entry CE long if above, PE long if below.' 
+      }
+    };
+
+    function deleteStrategy(id) {
+      if (confirm('Are you sure you want to delete this strategy?')) {
+        // Track deleted strategy IDs
+        let deletedIds = JSON.parse(localStorage.getItem('HNX_DELETED_STRATEGIES') || '[]');
+        if (!deletedIds.includes(id)) {
+          deletedIds.push(id);
+          localStorage.setItem('HNX_DELETED_STRATEGIES', JSON.stringify(deletedIds));
+        }
+
+        // Filter custom strategies list
+        let customStrats = JSON.parse(localStorage.getItem('HNX_CUSTOM_STRATEGIES') || '[]');
+        customStrats = customStrats.filter(s => s.id !== id);
+        localStorage.setItem('HNX_CUSTOM_STRATEGIES', JSON.stringify(customStrats));
+
+        // Clean system active lists
+        const systemActive = JSON.parse(localStorage.getItem('HNX_SYSTEM_STRATEGIES_ACTIVE') || '{}');
+        delete systemActive[id];
+        localStorage.setItem('HNX_SYSTEM_STRATEGIES_ACTIVE', JSON.stringify(systemActive));
+
+        showToast('Strategy deleted successfully!');
+        loadStrategies().then(() => {
+          renderStrategyCards();
+        });
+      }
+    }
+    window.deleteStrategy = deleteStrategy;
+
+    const strategies = {};
+    let pnlChart = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await bootPage('strategy');
+      // Populate lots size select dropdown with 1 to 30 lots
+      const lotSelect = document.getElementById('modal-lot-size');
+      if (lotSelect) {
+        lotSelect.innerHTML = '';
+        for (let l = 1; l <= 30; l++) {
+          const opt = document.createElement('option');
+          opt.value = l;
+          opt.innerText = `${l} Lot${l > 1 ? 's' : ''}`;
+          lotSelect.appendChild(opt);
+        }
+      }
+      initCreateStrategy();
+      await loadStrategies();
+      renderStrategyCards();
+      initRiskModal();
+    });
+
+    function getMergedCatalog() {
+      const merged = { ...CATALOG };
+      
+      // Filter out deleted strategy IDs
+      const deletedIds = JSON.parse(localStorage.getItem('HNX_DELETED_STRATEGIES') || '[]');
+      deletedIds.forEach(id => {
+        delete merged[id];
+      });
+
+      // Load custom overrides for system strategies
+      const systemCustom = JSON.parse(localStorage.getItem('HNX_SYSTEM_STRATEGIES_CUSTOM') || '{}');
+      Object.keys(systemCustom).forEach(id => {
+        if (merged[id]) {
+          merged[id] = {
+            ...merged[id],
+            name: systemCustom[id].name,
+            index: systemCustom[id].index,
+            capital: systemCustom[id].capital,
+            desc: systemCustom[id].desc,
+            details: systemCustom[id].details
+          };
+        }
+      });
+
+      const customStrats = JSON.parse(localStorage.getItem('HNX_CUSTOM_STRATEGIES') || '[]');
+      customStrats.forEach(s => {
+        if (deletedIds.includes(s.id)) return;
+        merged[s.id] = {
+          name: s.name,
+          index: s.index,
+          color: s.color || '#ff9f00',
+          desc: s.desc || '',
+          capital: s.capital || 80000,
+          custom: true,
+          details: s.details || {}
+        };
+      });
+      return merged;
+    }
+
+    async function loadStrategies() {
+      // Clear strategies first
+      Object.keys(strategies).forEach(id => delete strategies[id]);
+
+      // Load active system strategy states from localStorage toggles
+      const systemActive = JSON.parse(localStorage.getItem('HNX_SYSTEM_STRATEGIES_ACTIVE') || '{}');
+
+      // Load custom system strategy override details
+      const systemCustom = JSON.parse(localStorage.getItem('HNX_SYSTEM_STRATEGIES_CUSTOM') || '{}');
+
+      // System preconfigured defaults
+      Object.keys(CATALOG).forEach(id => {
+        strategies[id] = {
+          active: systemActive[id] || false,
+          settings: systemCustom[id]?.settings || { lot_size: 1, multiplier: 1, mtm_max_profit: 8000, mtm_max_loss: 3000 }
+        };
+      });
+
+      // Custom strategies from localStorage
+      const customStrats = JSON.parse(localStorage.getItem('HNX_CUSTOM_STRATEGIES') || '[]');
+      customStrats.forEach(s => {
+        strategies[s.id] = {
+          active: s.active || false,
+          settings: s.settings || { lot_size: 1, multiplier: 1, mtm_max_profit: 35, mtm_max_loss: 20 }
+        };
+      });
+
+      if (apiConnected) {
+        try {
+          const res = await fetch(`${API_BASE}/user/strategies`, { headers: { 'Authorization': `Bearer ${jwtToken}` } });
+          if (res.ok) {
+            const data = await res.json();
+            data.forEach(s => {
+              if (strategies[s.id]) {
+                strategies[s.id].settings = s.settings;
+              }
+            });
+          }
+        } catch {}
+      }
+    }
+
+    function renderStrategyCards() {
+      const container = document.getElementById('strategies-container');
+      container.innerHTML = '';
+
+      const mergedCatalog = getMergedCatalog();
+
+      Object.keys(mergedCatalog).forEach(id => {
+        const cat = mergedCatalog[id];
+        const s = strategies[id];
+        if (!s) return;
+
+        const card = document.createElement('div');
+        card.className = 'strategy-card premium-card';
+        card.id = `strat-${id}`;
+
+        const lotSize = s.settings.lot_size;
+        const targetValue = cat.details?.target || 35;
+        const slValue = cat.details?.sl || 15;
+        const capitalValue = cat.capital || 80000;
+
+        let bodyContent = '';
+        if (cat.custom || (cat.details && Object.keys(cat.details).length > 0)) {
+          const slModeText = cat.details?.sl_mode || 'Default (15 pts)';
+          const tfText = cat.details?.timeframe || '1 Min';
+          const entryTimeText = cat.details?.entry_time || '9:17 onwards';
+          const trailingText = cat.details?.trailing_trigger || 30;
+          const martCapText = cat.details?.martingale_cap || 5;
+          const rulesText = cat.details?.rules || '';
+
+          bodyContent = `
+            <div style="font-family:'Space Grotesk', sans-serif; font-weight:600; color:#fff; margin-bottom:4px;">Target: ${targetValue} Points | SL Mode: ${slModeText}</div>
+            <div style="font-style:italic; color:rgba(255,255,255,0.5); font-size:0.8rem; margin-bottom:6px;">${cat.desc}</div>
+            <div style="color:rgba(255,255,255,0.7); display:flex; flex-direction:column; gap:2px;">
+              <div>• Timeframe: ${tfText} | Timing: ${entryTimeText}</div>
+              <div>• Trailing Trigger: ${trailingText} pts | Martingale Cap: ${martCapText} lots</div>
+              ${rulesText ? `<div style="border-top:1px dashed rgba(255,255,255,0.06); margin-top:4px; padding-top:4px; color:#ff9f00;">Rules: ${rulesText}</div>` : ''}
+            </div>
+          `;
+        } else {
+          bodyContent = `
+            <div style="font-family:'Space Grotesk', sans-serif; font-weight:600; color:#fff; margin-bottom:4px;">Target: ${targetValue} Points | Trailing SL: 30 pts</div>
+            <div style="font-style:italic; color:rgba(255,255,255,0.5); font-size:0.8rem; margin-bottom:6px;">${cat.desc}</div>
+            <div style="color:rgba(255,255,255,0.7); display:flex; flex-direction:column; gap:2px;">
+              <div>• SL Modes: Default 15-pt / Alternative 20-pt Candle-Close.</div>
+              <div>• Trailing SL: Shifts to breakeven (entry price) at +30 points.</div>
+              <div>• Position Sizing: Martingale (increases by +1 lot on SL hit, resets to 1 lot on Target hit).</div>
+              <div>• Re-entry Rule: Wait for close below then close back above marked close.</div>
+            </div>
+          `;
+        }
+
+        const isChecked = s.active ? 'checked' : '';
+
+        card.innerHTML = `
+          <div class="strat-header" style="align-items: flex-start;">
+            <div>
+              <span class="index-tag" style="background:${cat.color}22;color:${cat.color};border:1px solid ${cat.color}44;">${cat.index}</span>
+              <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; margin-top: 0.5rem; line-height: 1.4;">${cat.name}</h3>
+              <span class="gold-badge" style="font-size: 0.7rem; padding: 2px 6px; vertical-align: middle; margin-left: 0.25rem;">S3</span> 
+              <span class="status-badge" style="background: rgba(0, 255, 135, 0.1); color: #00ff87; font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; text-transform: uppercase;">READY</span>
+            </div>
+            <div class="toggle-switch" style="margin-top: 0.25rem;">
+              <input type="checkbox" id="toggle-${id}" class="strat-toggle-check" ${isChecked} />
+              <label for="toggle-${id}"></label>
+            </div>
+          </div>
+          
+          <div class="strat-body" style="font-size: 0.85rem; color: rgba(255,255,255,0.6); line-height: 1.6; margin-bottom: 1.25rem;">
+            ${bodyContent}
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1rem; margin-top: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+            <div style="display: flex; gap: 1.25rem;">
+              <div>
+                <div style="font-size: 0.7rem; color: rgba(255,255,255,0.4); text-transform: uppercase; font-weight: 600;">MINIMUM CAPITAL</div>
+                <div style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-top: 2px;">₹${Number(capitalValue).toLocaleString()}</div>
+              </div>
+              <div style="border-left: 1px solid rgba(255,255,255,0.1); padding-left: 1.25rem;">
+                <div style="font-size: 0.7rem; color: rgba(255,255,255,0.4); text-transform: uppercase; font-weight: 600;">LOT</div>
+                <div style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-top: 2px;">${lotSize}</div>
+              </div>
+              <div style="border-left: 1px solid rgba(255,255,255,0.1); padding-left: 1.25rem;">
+                <div style="font-size: 0.7rem; color: rgba(255,255,255,0.4); text-transform: uppercase; font-weight: 600;">TARGET</div>
+                <div style="font-size: 1.1rem; font-weight: 700; color: #00ff87; margin-top: 2px;">${targetValue} pts</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <button class="statistics-btn" onclick="openPerformanceStats('${id}')"><i data-lucide="bar-chart-2" style="width:14px; height:14px;"></i> STATISTICS</button>
+              <button class="btn btn-secondary btn-sm" style="padding: 6px 12px; font-size: 0.75rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; cursor: pointer;" onclick="editStrategy('${id}')"><i data-lucide="edit" style="width:13px; height:13px;"></i> EDIT</button>
+              <button class="btn btn-danger btn-sm" style="padding: 6px 12px; font-size: 0.75rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.25); color: #ef4444;" onclick="deleteStrategy('${id}')"><i data-lucide="trash-2" style="width:13px; height:13px;"></i> DELETE</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+      bindEvents();
+    }
+
+    function editStrategy(id) {
+      const cat = getMergedCatalog()[id];
+      const s = strategies[id];
+      if (!cat || !s) return;
+
+      // Populate Form
+      document.getElementById('edit-strat-id').value = id;
+      document.getElementById('new-strat-name').value = cat.name;
+      document.getElementById('new-strat-underlying').value = cat.index;
+      document.getElementById('new-strat-ordertype').value = cat.details?.order_type || 'MIS';
+      document.getElementById('new-strat-contracts').value = cat.details?.contracts || 'Current Week';
+      document.getElementById('new-strat-timeframe').value = cat.details?.timeframe || '1 Min';
+      document.getElementById('new-strat-lot-size').value = s.settings.lot_size || 1;
+      document.getElementById('new-strat-entrytime').value = cat.details?.entry_time || '09:17';
+      
+      const slModeVal = cat.details?.sl_mode || 'Default (15 pts)';
+      if (slModeVal === 'Default (15 pts)') {
+        document.getElementById('sl-mode-default').checked = true;
+      } else {
+        document.getElementById('sl-mode-alt').checked = true;
+      }
+
+      document.getElementById('new-strat-target').value = cat.details?.target || s.settings.mtm_max_profit || 35;
+      document.getElementById('new-strat-trailing').value = cat.details?.trailing_trigger || 30;
+      document.getElementById('new-strat-martingale-cap').value = cat.details?.martingale_cap || 5;
+      document.getElementById('new-strat-capital').value = cat.capital || 80000;
+      document.getElementById('new-strat-mtm-profit').value = s.settings.mtm_max_profit || 8000;
+      document.getElementById('new-strat-mtm-loss').value = s.settings.mtm_max_loss || 3000;
+      document.getElementById('new-strat-rules').value = cat.details?.rules || '';
+
+      // Update Modal Header & Submit Button Text
+      document.getElementById('modal-title-text').innerText = 'Edit Strategy';
+      document.getElementById('submit-btn-text').innerHTML = '<i data-lucide="check-circle"></i> Update Strategy';
+
+      // Open Modal
+      document.getElementById('create-strat-modal').classList.remove('hidden');
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+    window.editStrategy = editStrategy;
+
+    function initCreateStrategy() {
+      const openBtn = document.getElementById('open-create-strat-btn');
+      const modal = document.getElementById('create-strat-modal');
+      const closeBtn = document.getElementById('close-create-modal-btn');
+      const form = document.getElementById('create-strategy-form');
+      const lotSelect = document.getElementById('new-strat-lot-size');
+
+      if (lotSelect) {
+        lotSelect.innerHTML = '';
+        for (let l = 1; l <= 30; l++) {
+          const opt = document.createElement('option');
+          opt.value = l;
+          opt.innerText = `${l} Lot${l > 1 ? 's' : ''}`;
+          lotSelect.appendChild(opt);
+        }
+      }
+
+      openBtn?.addEventListener('click', () => {
+        // Reset form & hidden edit input
+        document.getElementById('edit-strat-id').value = '';
+        form.reset();
+
+        document.getElementById('modal-title-text').innerText = 'Create Custom Strategy';
+        document.getElementById('submit-btn-text').innerHTML = '<i data-lucide="plus-circle"></i> Create Strategy';
+
+        modal?.classList.remove('hidden');
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      });
+
+      form?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('new-strat-name').value;
+        const index = document.getElementById('new-strat-underlying').value;
+        const ordertype = document.getElementById('new-strat-ordertype').value;
+        const contracts = document.getElementById('new-strat-contracts').value;
+        const timeframe = document.getElementById('new-strat-timeframe').value;
+        const lotSize = +document.getElementById('new-strat-lot-size').value;
+        const entryTime = document.getElementById('new-strat-entrytime').value;
+        const slMode = document.querySelector('input[name="new-strat-sl-mode"]:checked').value;
+        const target = +document.getElementById('new-strat-target').value;
+        const trailing = +document.getElementById('new-strat-trailing').value;
+        const martingaleCap = +document.getElementById('new-strat-martingale-cap').value;
+        const capital = +document.getElementById('new-strat-capital').value;
+        const mtmProfit = +document.getElementById('new-strat-mtm-profit').value;
+        const mtmLoss = +document.getElementById('new-strat-mtm-loss').value;
+        const rules = document.getElementById('new-strat-rules').value;
+
+        const editId = document.getElementById('edit-strat-id').value;
+        const sl = slMode === 'Default (15 pts)' ? 15 : 20;
+
+        if (editId) {
+          // Editing existing strategy
+          if (editId.startsWith('custom_')) {
+            const customStrats = JSON.parse(localStorage.getItem('HNX_CUSTOM_STRATEGIES') || '[]');
+            const idx = customStrats.findIndex(s => s.id === editId);
+            if (idx !== -1) {
+              customStrats[idx].name = name;
+              customStrats[idx].index = index;
+              customStrats[idx].capital = capital;
+              customStrats[idx].desc = `Intraday buying breakout. Target: ${target} pts | Trailing: ${trailing} pts.`;
+              customStrats[idx].settings = {
+                lot_size: lotSize,
+                multiplier: 1,
+                mtm_enabled: true,
+                mtm_max_profit: mtmProfit,
+                mtm_max_loss: mtmLoss
+              };
+              customStrats[idx].details = {
+                target: target,
+                sl: sl,
+                sl_mode: slMode,
+                trailing_trigger: trailing,
+                martingale_cap: martingaleCap,
+                order_type: ordertype,
+                contracts: contracts,
+                timeframe: timeframe,
+                entry_time: entryTime,
+                rules: rules
+              };
+              localStorage.setItem('HNX_CUSTOM_STRATEGIES', JSON.stringify(customStrats));
+            }
+          } else {
+            // Editing preconfigured system strategy override
+            const systemCustom = JSON.parse(localStorage.getItem('HNX_SYSTEM_STRATEGIES_CUSTOM') || '{}');
+            systemCustom[editId] = {
+              name: name,
+              index: index,
+              capital: capital,
+              desc: `Intraday buying breakout. Target: ${target} pts | Trailing: ${trailing} pts.`,
+              settings: {
+                lot_size: lotSize,
+                multiplier: 1,
+                mtm_enabled: true,
+                mtm_max_profit: mtmProfit,
+                mtm_max_loss: mtmLoss
+              },
+              details: {
+                target: target,
+                sl: sl,
+                sl_mode: slMode,
+                trailing_trigger: trailing,
+                martingale_cap: martingaleCap,
+                order_type: ordertype,
+                contracts: contracts,
+                timeframe: timeframe,
+                entry_time: entryTime,
+                rules: rules
+              }
+            };
+            localStorage.setItem('HNX_SYSTEM_STRATEGIES_CUSTOM', JSON.stringify(systemCustom));
+          }
+
+          showToast('Strategy updated successfully!');
+        } else {
+          // Creating a new custom strategy
+          const id = `custom_${Date.now()}`;
+          const newStrategy = {
+            id: id,
+            name: name,
+            index: index,
+            active: false, // OFF by default so it doesn't show on dashboard until toggled!
+            capital: capital,
+            color: index === 'NIFTY' ? '#818cf8' : '#f472b6',
+            desc: `Intraday buying breakout. Target: ${target} pts | Trailing: ${trailing} pts.`,
+            settings: {
+              lot_size: lotSize,
+              multiplier: 1,
+              mtm_enabled: true,
+              mtm_max_profit: mtmProfit,
+              mtm_max_loss: mtmLoss
+            },
+            details: {
+              target: target,
+              sl: sl,
+              sl_mode: slMode,
+              trailing_trigger: trailing,
+              martingale_cap: martingaleCap,
+              order_type: ordertype,
+              contracts: contracts,
+              timeframe: timeframe,
+              entry_time: entryTime,
+              rules: rules
+            }
+          };
+
+          const customStrats = JSON.parse(localStorage.getItem('HNX_CUSTOM_STRATEGIES') || '[]');
+          customStrats.push(newStrategy);
+          localStorage.setItem('HNX_CUSTOM_STRATEGIES', JSON.stringify(customStrats));
+
+          showToast('Strategy Created! Toggle it ON to sync with Dashboard.');
+        }
+
+        modal?.classList.add('hidden');
+        form.reset();
+
+        loadStrategies().then(() => {
+          renderStrategyCards();
+        });
+      });
+    }
+
+    function bindEvents() {
+      // Toggle switches
+      document.querySelectorAll('.strat-toggle-check').forEach(toggle => {
+        toggle.addEventListener('change', async () => {
+          const id = toggle.id.replace('toggle-', '');
+          const active = toggle.checked;
+          const cat = getMergedCatalog()[id];
+          
+          strategies[id].active = active;
+
+          if (cat.custom) {
+            const customStrats = JSON.parse(localStorage.getItem('HNX_CUSTOM_STRATEGIES') || '[]');
+            const idx = customStrats.findIndex(s => s.id === id);
+            if (idx !== -1) {
+              customStrats[idx].active = active;
+              localStorage.setItem('HNX_CUSTOM_STRATEGIES', JSON.stringify(customStrats));
+            }
+          } else {
+            const systemActive = JSON.parse(localStorage.getItem('HNX_SYSTEM_STRATEGIES_ACTIVE') || '{}');
+            systemActive[id] = active;
+            localStorage.setItem('HNX_SYSTEM_STRATEGIES_ACTIVE', JSON.stringify(systemActive));
+          }
+
+          showToast(`${cat.name} toggled ${active ? 'ON (Visible on Dashboard)' : 'OFF (Hidden from Dashboard)'}`);
+        });
+      });
+    }
+
+    function initRiskModal() {
+      document.getElementById('close-modal-btn').addEventListener('click', () =>
+        document.getElementById('risk-modal').classList.add('hidden'));
+
+      document.getElementById('risk-settings-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('modal-strat-id').value;
+        const targetVal = +document.getElementById('modal-max-profit').value;
+        const slVal = +document.getElementById('modal-max-loss').value;
+        const lotVal = +document.getElementById('modal-lot-size').value;
+
+        const settings = {
+          strategy_id: id,
+          lot_size: lotVal,
+          multiplier: 1,
+          mtm_enabled: true,
+          mtm_max_profit: targetVal,
+          mtm_max_loss: slVal
+        };
+
+        if (apiConnected) {
+          try {
+            await fetch(`${API_BASE}/user/strategy/settings`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${jwtToken}` },
+              body: JSON.stringify(settings)
+            });
+          } catch {}
+        }
+
+        strategies[id].settings = settings;
+
+        // Synchronize in localStorage if it is a custom strategy
+        const customStrats = JSON.parse(localStorage.getItem('HNX_CUSTOM_STRATEGIES') || '[]');
+        const idx = customStrats.findIndex(s => s.id === id);
+        if (idx !== -1) {
+          customStrats[idx].settings = settings;
+          localStorage.setItem('HNX_CUSTOM_STRATEGIES', JSON.stringify(customStrats));
+        }
+
+        renderStrategyCards();
+
+        document.getElementById('risk-modal').classList.add('hidden');
+        showToast('Parameters updated!');
+      });
+    }
+
+    // ---- Performance Statistics Modal Actions ----
+    function toggleInnerStatsTab(type) {
+      const monthlyBtn = document.getElementById('tab-monthly-btn');
+      const dailyBtn = document.getElementById('tab-daily-btn');
+      const monthlyView = document.getElementById('stats-monthly-view');
+      const dailyView = document.getElementById('stats-daily-view');
+
+      if (type === 'monthly') {
+        monthlyBtn.classList.add('active');
+        dailyBtn.classList.remove('active');
+        monthlyView.classList.remove('hidden');
+        dailyView.classList.add('hidden');
+      } else {
+        monthlyBtn.classList.remove('active');
+        dailyBtn.classList.add('active');
+        monthlyView.classList.add('hidden');
+        dailyView.classList.remove('hidden');
+      }
+    }
+
+    let currentStatsId = null;
+    function resetStatsCurrent() {
+      if (currentStatsId && confirm('Reset all performance stats for this strategy?')) {
+        localStorage.removeItem(`HNX_STRATEGY_STATS_${currentStatsId}`);
+        showToast('Performance statistics reset!');
+        openPerformanceStats(currentStatsId);
+      }
+    }
+    window.resetStatsCurrent = resetStatsCurrent;
+
+    function openPerformanceStats(id) {
+      currentStatsId = id;
+      const cat = getMergedCatalog()[id];
+      const s = strategies[id];
+      if (!s) return;
+
+      document.getElementById('stats-modal-subtitle').innerText = `${cat.name} · March 2026 - Today`;
+      document.getElementById('stats-modal-capital').innerText = `Capital ₹${Number(cat.capital || 80000).toLocaleString()}`;
+      
+      const mockData = getStatsMockData(id, cat.capital || 80000);
+
+      const pnlEl = document.getElementById('stats-modal-total-pnl');
+      pnlEl.innerText = `${mockData.totalPnl >= 0 ? '+' : ''}₹${mockData.totalPnl.toLocaleString()}`;
+      pnlEl.className = `hist-card-value ${mockData.totalPnl >= 0 ? 'text-green' : 'text-red'}`;
+
+      const sumEl = document.getElementById('stats-modal-pnl-summary');
+      sumEl.innerText = `Today ${mockData.totalPnl >= 0 ? '+' : ''}₹${mockData.totalPnl.toLocaleString()} (${mockData.pnlPercent}%)`;
+      sumEl.className = `status-badge ${mockData.totalPnl >= 0 ? 'text-green' : 'text-red'}`;
+      sumEl.style.border = mockData.totalPnl >= 0 ? '1px solid rgba(0,255,135,0.2)' : '1px solid rgba(255,74,74,0.2)';
+      sumEl.style.background = mockData.totalPnl >= 0 ? 'rgba(0,255,135,0.1)' : 'rgba(255,74,74,0.1)';
+
+      document.getElementById('stats-modal-win-rate').innerText = `${mockData.winRate}%`;
+      
+      const avgEl = document.getElementById('stats-modal-avg-daily');
+      avgEl.innerText = `${mockData.avgDaily >= 0 ? '+' : ''}₹${mockData.avgDaily.toLocaleString()}`;
+      avgEl.className = `hist-card-value ${mockData.avgDaily >= 0 ? 'text-green' : 'text-red'}`;
+      
+      document.getElementById('stats-modal-trading-days').innerText = mockData.tradingDays;
+
+      document.getElementById('stats-modal-best-day').innerText = `+₹${mockData.bestDay.toLocaleString()}`;
+      document.getElementById('stats-modal-worst-day').innerText = `-₹${mockData.worstDay.toLocaleString()}`;
+      
+      document.getElementById('stats-modal-profit-days').innerText = `${mockData.profitDays} Profit Days`;
+      document.getElementById('stats-modal-loss-days').innerText = `${mockData.lossDays} Loss Days`;
+      document.getElementById('stats-modal-max-dd').innerText = `Max DD: -₹${mockData.maxDD.toLocaleString()}`;
+
+      // Populate monthly table
+      const monthlyBody = document.getElementById('stats-monthly-body');
+      monthlyBody.innerHTML = '';
+      mockData.monthly.forEach(m => {
+        const row = document.createElement('tr');
+        row.style.borderBottom = '1px solid #e8eaed';
+        row.innerHTML = `
+          <td style="padding:10px 12px; font-weight:600; color:#202124;">${m.month}</td>
+          <td style="padding:10px 12px; font-weight:700; color:${m.pnl >= 0 ? '#137333' : '#c5221f'};">${m.pnl >= 0 ? '+' : ''}₹${m.pnl.toLocaleString()}</td>
+          <td style="padding:10px 12px;">
+            <span class="status-badge" style="background:${m.winRate >= 50 ? '#e6f4ea' : '#fce8e6'}; color:${m.winRate >= 50 ? '#137333' : '#c5221f'}; font-size:0.72rem; padding:3px 10px; border-radius:20px; font-weight:600;">${m.winRate}%</span>
+          </td>
+          <td style="padding:10px 12px; color:#5f6368; font-weight:500;">${m.days}</td>
+        `;
+        monthlyBody.appendChild(row);
+      });
+
+      // Populate daily table
+      const dailyBody = document.getElementById('stats-daily-body');
+      dailyBody.innerHTML = '';
+      mockData.daily.forEach(d => {
+        const row = document.createElement('tr');
+        row.style.borderBottom = '1px solid #e8eaed';
+        row.style.background = '#ffffff';
+        const isUp = d.pnl >= 0;
+        const iconStyle = isUp ? 'background:#e6f4ea; color:#137333;' : 'background:#fce8e6; color:#c5221f;';
+        
+        row.innerHTML = `
+          <td style="padding:10px 14px; font-weight:500; color:#3c4043;">${d.date}</td>
+          <td style="padding:10px 14px; display:flex; align-items:center; justify-content:flex-end; gap:10px; border:none;">
+            <span style="color:${isUp ? '#137333' : '#c5221f'}; font-weight:700;">| ${isUp ? '+' : ''}₹${d.pnl.toLocaleString()}</span>
+            <div style="width:20px; height:20px; border-radius:50%; ${iconStyle} display:inline-flex; align-items:center; justify-content:center; font-size:0.6rem; font-weight:bold;">
+              ${isUp ? '▲' : '▼'}
+            </div>
+          </td>
+        `;
+        dailyBody.appendChild(row);
+      });
+
+      document.getElementById('stats-modal').classList.remove('hidden');
+
+      // Initialize line chart
+      setTimeout(() => {
+        initStatsChart(mockData.chartLabels, mockData.chartData, mockData.totalPnl >= 0);
+      }, 100);
+    }
+
+    function initStatsChart(labels, data, isProfit) {
+      const ctx = document.getElementById('pnl-growth-chart').getContext('2d');
+      if (pnlChart) {
+        pnlChart.destroy();
+      }
+
+      const lineColor = isProfit ? '#00ff87' : '#ff4a4a';
+      const shadowColor = isProfit ? 'rgba(0, 255, 135, 0.04)' : 'rgba(255, 74, 74, 0.04)';
+
+      pnlChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'PnL Growth %',
+            data: data,
+            borderColor: lineColor,
+            borderWidth: 2,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            tension: 0.35,
+            fill: true,
+            backgroundColor: shadowColor
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              mode: 'index',
+              intersect: false,
+              backgroundColor: 'rgba(11, 13, 25, 0.95)',
+              titleColor: 'rgba(255,255,255,0.6)',
+              bodyColor: '#fff',
+              borderColor: 'rgba(255,255,255,0.08)',
+              borderWidth: 1,
+              callbacks: {
+                label: function(context) {
+                  return `PnL Growth: ${context.parsed.y.toFixed(2)}%`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { display: false }
+            },
+            y: {
+              grid: { color: 'rgba(255,255,255,0.03)' },
+              ticks: {
+                color: 'rgba(255,255,255,0.4)',
+                font: { size: 9 },
+                callback: function(val) { return val + '%'; }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function getStatsMockData(id, capital) {
+      const statsKey = `HNX_STRATEGY_STATS_${id}`;
+      const savedStats = localStorage.getItem(statsKey);
+      
+      if (savedStats) {
+        return JSON.parse(savedStats);
+      }
+
+      // Default empty/reset state (No dummy content, clean slate)
+      return {
+        totalPnl: 0,
+        pnlPercent: 0,
+        winRate: 0,
+        avgDaily: 0,
+        tradingDays: 0,
+        bestDay: 0,
+        worstDay: 0,
+        profitDays: 0,
+        lossDays: 0,
+        maxDD: 0,
+        chartLabels: ['Start'],
+        chartData: [0],
+        monthly: [],
+        daily: []
+      };
+    }
+  </script>
+</body>
+</html>

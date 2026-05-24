@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HNX Quantum | Dashboard</title>
+  <meta name="description" content="Live trading dashboard — track your available capital and P&L in real time." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .otm-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      padding: 4px 0;
+    }
+    .otm-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .otm-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #8f92a1;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .otm-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 32px;
+      height: 24px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      background: rgba(255,255,255,0.03);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .otm-divider {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.1);
+      align-self: flex-end;
+      margin-bottom: 2px;
+    }
+    
+    /* Specific Pill Badge Styles */
+    .badge-o {
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      border-color: rgba(255,255,255,0.08);
+    }
+    .badge-t {
+      background: rgba(26, 115, 232, 0.08);
+      color: #1a73e8;
+      border-color: rgba(26, 115, 232, 0.15);
+    }
+    .badge-m {
+      background: rgba(147, 51, 234, 0.08);
+      color: #a855f7;
+      border-color: rgba(147, 51, 234, 0.15);
+    }
+    .badge-pos {
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      border-color: rgba(255,255,255,0.08);
+    }
+    .badge-pnl {
+      min-width: 65px;
+      background: rgba(0, 255, 135, 0.06);
+      color: #00ff87;
+      border-color: rgba(0, 255, 135, 0.12);
+    }
+    .badge-pnl.text-red {
+      background: rgba(239, 68, 68, 0.06);
+      color: #ef4444;
+      border-color: rgba(239, 68, 68, 0.12);
+    }
+    .badge-pnl.neutral {
+      background: rgba(255,255,255,0.04);
+      color: #8f92a1;
+      border-color: rgba(255,255,255,0.08);
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow bg-cyan"></div>
+  <div class="ambient-glow bg-purple"></div>
+
+  <!-- Sidebar Overlay -->
+  <div id="sidebar-overlay" class="sidebar-overlay hidden"></div>
+
+  <!-- Sidebar Drawer -->
+  <nav id="sidebar-drawer" class="sidebar-drawer">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <img src="logo.png" alt="HNX" class="brand-logo-img-sm" />
+        <span>HNX Quantum</span>
+      </div>
+      <button id="close-sidebar-btn" class="sidebar-close-btn"><i data-lucide="x">✕</i></button>
+    </div>
+    <ul class="sidebar-nav-list">
+      <li><a href="dashboard.html" class="sidebar-link" data-page="dashboard"><i data-lucide="layout-dashboard">📊</i><span>Dashboard</span></a></li>
+      <li><a href="strategy.html" class="sidebar-link" data-page="strategy"><i data-lucide="trending-up">📈</i><span>Strategies</span></a></li>
+      <li><a href="order-history.html" class="sidebar-link" data-page="history"><i data-lucide="history">⏳</i><span>Order History</span></a></li>
+      <li><a href="settings.html" class="sidebar-link" data-page="settings"><i data-lucide="settings">⚙️</i><span>Settings</span></a></li>
+    </ul>
+    <div class="sidebar-footer-actions">
+      <button id="sidebar-logout-btn" class="sidebar-logout-btn"><i data-lucide="log-out">🚪</i><span>Sign Out</span></button>
+    </div>
+  </nav>
+
+  <!-- Top Bar -->
+  <header class="top-bar">
+    <button id="hamburger-btn" class="hamburger-btn"><i data-lucide="menu">☰</i></button>
+    <div class="top-bar-logo">
+      <img src="logo.png" alt="HNX Quantum" class="brand-logo-img-sm" />
+      <span class="brand-logo-text">HNX Quantum</span>
+    </div>
+    <div class="top-bar-right">
+      <span class="status-pill status-unlinked" id="ip-status-badge">IP Not Assigned</span>
+      <button class="nav-icon-btn"><i data-lucide="bell">🔔</i></button>
+      <div class="avatar-wrapper">
+        <div class="avatar-btn" id="profile-avatar-btn">H</div>
+        <div class="profile-dropdown hidden" id="profile-dropdown-menu">
+          <div class="dropdown-section">
+            <span class="section-label">MY PROFILE</span>
+            <h4 id="dropdown-user-name">Trader</h4>
+          </div>
+          <div class="profile-details">
+            <div class="detail-item"><i data-lucide="mail">✉️</i><span id="dropdown-user-email">-</span></div>
+            <div class="detail-item"><i data-lucide="phone">📞</i><span id="dropdown-user-phone">-</span></div>
+          </div>
+          <hr class="dropdown-divider" />
+          <a href="#" class="dropdown-item" id="change-password-trigger"><i data-lucide="key-round">🔑</i><span>Change Password</span></a>
+          <a href="#" class="dropdown-item logout" id="logout-btn"><i data-lucide="log-out">🚪</i><span>Sign Out</span></a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="page-wrapper">
+    <main class="page-content">
+
+      <!-- Summary Cards -->
+      <div class="summary-row">
+        <!-- Available Capital -->
+        <div class="summary-card capital-card">
+          <div class="card-left">
+            <div class="currency-badge">₹</div>
+            <div class="card-text-group">
+              <span class="card-label">AVAILABLE CAPITAL</span>
+              <div class="card-value" id="margin-value">₹0.00</div>
+            </div>
+          </div>
+          <a href="settings.html" class="btn btn-connect" id="connect-broker-btn">CONNECT</a>
+        </div>
+
+        <!-- Today's P&L -->
+        <div class="summary-card pnl-card">
+          <div class="card-left">
+            <div class="card-text-group">
+              <span class="card-label">TODAY'S P&amp;L</span>
+              <div class="card-value text-green" id="live-pnl-value">₹0.00</div>
+              <span class="card-sub" id="live-pnl-status">Awaiting Strategy Deployment</span>
+            </div>
+          </div>
+          <div class="card-icons">
+            <i data-lucide="refresh-cw" class="icon-sync"></i>
+            <i data-lucide="wifi" class="icon-wifi"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Portfolio Execution (LIVE) -->
+      <div class="premium-card section-card" style="margin-bottom:1.5rem;">
+        <div class="card-header">
+          <div class="header-left">
+            <h2>Portfolio Execution (LIVE)</h2>
+            <span class="active-count-badge" id="active-strat-count">0 ACTIVE</span>
+          </div>
+          <span class="realtime-indicator">• Realtime</span>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>S.NO</th>
+                <th>STRATEGY NAME</th>
+                <th style="text-align: center;">O | T | M | POS | PNL</th>
+                <th>STATUS</th>
+                <th>ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="execution-table-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tools -->
+      <div class="tools-section">
+        <div class="tools-section-header">
+          <i data-lucide="wrench"></i>
+          <h3>Tools</h3>
+        </div>
+        <div class="tools-row">
+          <div class="tool-card">
+            <div class="tool-card-left">
+              <div class="tool-icon-wrap lots-icon"><i data-lucide="layers"></i></div>
+              <div>
+                <div class="tool-name">Lots</div>
+                <div class="tool-desc" id="lots-tool-desc">1 Lot configured in all strategies</div>
+              </div>
+            </div>
+            <button class="btn-tool-configure" id="lots-config-btn"><i data-lucide="settings"></i> Configure</button>
+          </div>
+          <div class="tool-card">
+            <div class="tool-card-left">
+              <div class="tool-icon-wrap mtm-icon"><i data-lucide="shield" class="mtm-shield-active"></i></div>
+              <div>
+                <div class="tool-name">MTM Guard</div>
+                <div class="tool-desc" id="mtm-tool-desc">Max Loss ₹3,000 | Max Profit ₹8,000</div>
+              </div>
+            </div>
+            <button class="btn-tool-configure" id="mtm-config-btn"><i data-lucide="settings"></i> Configure</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Today's Positions -->
+      <div class="premium-card section-card">
+        <div class="card-header">
+          <div class="header-left">
+            <h2>Today's Positions</h2>
+            <span class="gold-badge" id="positions-count-badge">0 positions</span>
+          </div>
+          <span class="realtime-indicator">• Live P&amp;L</span>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>SYMBOL</th>
+                <th>TYPE</th>
+                <th>TRADES</th>
+                <th>AVG BUY</th>
+                <th>AVG SELL</th>
+                <th>TOTAL QTY</th>
+                <th>P&amp;L</th>
+                <th>STATUS</th>
+              </tr>
+            </thead>
+            <tbody id="positions-table-body">
+              <tr id="empty-positions-row">
+                <td colspan="8" class="empty-state-td">
+                  <div class="empty-state-content">
+                    <i data-lucide="activity" class="pulse-icon"></i>
+                    <h3>No positions yet today</h3>
+                    <p>Positions will appear here as trades are executed</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Lots Config Modal -->
+  <div id="lots-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header"><h2>Configure Lots</h2><button class="modal-close" onclick="document.getElementById('lots-modal').classList.add('hidden')">&times;</button></div>
+      <form id="lots-config-form">
+        <div class="input-group">
+          <label>Default Lot Size</label>
+          <select id="lots-size-input" required></select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block"><i data-lucide="check"></i> Apply to All Strategies</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MTM Guard Modal -->
+  <div id="mtm-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header"><h2>MTM Guard Configuration</h2><button class="modal-close" onclick="document.getElementById('mtm-modal').classList.add('hidden')">&times;</button></div>
+      <form id="mtm-config-form">
+        <div class="input-group">
+          <label>Maximum Daily Profit Target (₹)</label>
+          <input type="number" id="mtm-max-profit" min="0" placeholder="e.g. 8000" style="margin-bottom: 2px;" />
+          <span style="font-size: 0.72rem; color: rgba(255,255,255,0.4); display: block; margin-top: 2px;">Set to 0 or leave blank to disable profit ceiling</span>
+        </div>
+        <div class="input-group">
+          <label>Maximum Daily Loss Drawdown (₹)</label>
+          <input type="number" id="mtm-max-loss" min="0" placeholder="e.g. 3000" style="margin-bottom: 2px;" />
+          <span style="font-size: 0.72rem; color: rgba(255,255,255,0.4); display: block; margin-top: 2px;">Set to 0 or leave blank to disable loss limit</span>
+        </div>
+        <div class="sq-warning"><i data-lucide="alert-triangle"></i><span>When MTM limit is hit, <strong>ALL strategies</strong> will be squared off for the day.</span></div>
+        <button type="submit" class="btn btn-primary btn-block"><i data-lucide="shield"></i> Save MTM Guard</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Square Off Confirmation Modal -->
+  <div id="squareoff-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header"><h2>Confirm Square Off</h2><button class="modal-close" onclick="document.getElementById('squareoff-modal').classList.add('hidden')">&times;</button></div>
+      <div class="square-off-details">
+        <div class="sq-detail-row"><span>Strategy</span><span id="sq-strat-name">—</span></div>
+        <div class="sq-detail-row"><span>Current P&L</span><span id="sq-strat-pnl">₹0.00</span></div>
+        <div class="sq-detail-row"><span>Open Positions</span><span id="sq-strat-positions">0</span></div>
+        <div class="sq-detail-row"><span>Order Type</span><span>Market Order (Instant)</span></div>
+      </div>
+      <div class="sq-warning">
+        <i data-lucide="alert-triangle"></i>
+        <span>This will <strong>immediately close all positions</strong> for this strategy at market price. This action cannot be undone.</span>
+      </div>
+      <input type="hidden" id="sq-strat-id" />
+      <button class="btn-square-off-confirm" id="sq-confirm-btn">
+        <i data-lucide="x-circle"></i> Confirm Square Off
+      </button>
+    </div>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div id="change-password-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header"><h2>Change Password</h2><button id="close-change-pass-btn" class="modal-close">&times;</button></div>
+      <form id="change-password-form">
+        <div class="input-group"><label>Current Password</label><div class="password-wrapper"><input type="password" id="change-curr-password" required placeholder="••••••••••••" /><button type="button" class="eye-toggle"><i data-lucide="eye"></i></button></div></div>
+        <div class="input-group"><label>New Password</label><div class="password-wrapper"><input type="password" id="change-new-password" required placeholder="••••••••••••" /><button type="button" class="eye-toggle"><i data-lucide="eye"></i></button></div><div class="validation-rules"><p id="change-rule-length" class="invalid">❌ Minimum 8 characters</p><p id="change-rule-number" class="invalid">❌ At least 1 number</p><p id="change-rule-special" class="invalid">❌ At least 1 special character</p></div></div>
+        <div class="input-group"><label>Confirm New Password</label><div class="password-wrapper"><input type="password" id="change-conf-password" required placeholder="••••••••••••" /><button type="button" class="eye-toggle"><i data-lucide="eye"></i></button></div></div>
+        <button type="submit" class="btn btn-primary btn-block"><i data-lucide="check"></i> Update Password</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="notification-toast" class="toast hidden"></div>
+  <button class="support-float-btn" id="support-trigger"><i data-lucide="headphones"></i></button>
+
+  <script src="app.js"></script>
+  <script>
+    // ---- Dashboard State ----
+    const strategies = {};
+    let globalLots = { lot_size: 1 };
+    let globalMTM = JSON.parse(localStorage.getItem('HNX_GLOBAL_MTM') || '{"mtm_max_profit": 8000, "mtm_max_loss": 3000}');
+    let totalDayPnl = 0;
+
+    const CATALOG = {
+      time_formula_35pts: { name: 'Algo version of Nifty Time Formula Breakout Strategy (9:16)', index: 'NIFTY', color: '#ff9f00' }
+    };
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await bootPage('dashboard');
+      // Populate lots size select dropdown with 1 to 30 lots
+      const lotsSelect = document.getElementById('lots-size-input');
+      if (lotsSelect) {
+        lotsSelect.innerHTML = '';
+        for (let l = 1; l <= 30; l++) {
+          const opt = document.createElement('option');
+          opt.value = l;
+          opt.innerText = `${l} Lot${l > 1 ? 's' : ''}`;
+          lotsSelect.appendChild(opt);
+        }
+      }
+      await loadStrategies();
+      renderPortfolio();
+      initTools();
+      initSquareOff();
+      setInterval(tickEngine, 1500);
+    });
+
+    function getMergedCatalog() {
+      const merged = { ...CATALOG };
+      const deletedIds = JSON.parse(localStorage.getItem('HNX_DELETED_STRATEGIES') || '[]');
+      deletedIds.forEach(id => {
+        delete merged[id];
+      });
+
+      const systemCustom = JSON.parse(localStorage.getItem('HNX_SYSTEM_STRATEGIES_CUSTOM') || '{}');
+      Object.keys(systemCustom).forEach(id => {
+        if (merged[id]) {
+          merged[id] = {
+            ...merged[id],
+            name: systemCustom[id].name,
+            index: systemCustom[id].index,
+            details: systemCustom[id].details || {}
+          };
+        }
+      });
+
+      const customStrats = JSON.parse(localStorage.getItem('HNX_CUSTOM_STRATEGIES') || '[]');
+      customStrats.forEach(s => {
+        if (deletedIds.includes(s.id)) return;
+        merged[s.id] = {
+          name: s.name,
+          index: s.index,
+          color: s.color || '#ff9f00',
+          custom: true,
+          details: s.details || {}
+        };
+      });
+      return merged;
+    }
+
+    async function loadStrategies() {
+      // Clear
+      Object.keys(strategies).forEach(k => delete strategies[k]);
+
+      // Load active system strategy states from localStorage toggles
+      const systemActive = JSON.parse(localStorage.getItem('HNX_SYSTEM_STRATEGIES_ACTIVE') || '{}');
+      const systemCustom = JSON.parse(localStorage.getItem('HNX_SYSTEM_STRATEGIES_CUSTOM') || '{}');
+
+      // Preconfigured Defaults
+      Object.keys(CATALOG).forEach(id => {
+        strategies[id] = {
+          active: systemActive[id] || false, // Toggled ON state from strategy page!
+          deployed: false,                  // Dashboard deployed status!
+          pnl: 0,
+          positions: 0,
+          settings: systemCustom[id]?.settings || { lot_size: 1, multiplier: 1, mtm_max_profit: 8000, mtm_max_loss: 3000 }
+        };
+      });
+
+      // Load custom user strategies
+      const customStrats = JSON.parse(localStorage.getItem('HNX_CUSTOM_STRATEGIES') || '[]');
+      customStrats.forEach(s => {
+        strategies[s.id] = {
+          active: s.active || false,       // Toggled ON state from strategy page!
+          deployed: s.deployed || false,   // Dashboard deployed status!
+          pnl: 0,
+          positions: 0,
+          settings: s.settings || { lot_size: 1, multiplier: 1, mtm_max_profit: 35, mtm_max_loss: 20 }
+        };
+      });
+
+      if (apiConnected) {
+        try {
+          const res = await fetch(`${API_BASE}/user/strategies`, { headers: { 'Authorization': `Bearer ${jwtToken}` } });
+          if (res.ok) {
+            const data = await res.json();
+            data.forEach(s => {
+              if (strategies[s.id]) {
+                // Sync settings and map active uvicorn execution status to deployed
+                strategies[s.id].settings = s.settings;
+                strategies[s.id].deployed = s.active;
+              }
+            });
+          }
+        } catch {}
+      }
+    }
+
+    function renderPortfolio() {
+      const tbody = document.getElementById('execution-table-body');
+      tbody.innerHTML = '';
+      let activeCount = 0;
+      let i = 1;
+
+      const merged = getMergedCatalog();
+      let renderedAny = false;
+
+      Object.keys(merged).forEach(id => {
+        const cat = merged[id];
+        const s = strategies[id];
+        if (!s) return;
+        
+        // ONLY render strategies that are toggled ON in the strategy section!
+        if (!s.active) return;
+        renderedAny = true;
+
+        const status = s.deployed ? 'active' : 'paused';
+        if (s.deployed) activeCount++;
+
+        const pnlVal = s.pnl || 0;
+        const pnlPrefix = pnlVal > 0 ? '+' : '';
+        const pnlClassBadge = pnlVal > 0 ? 'text-green' : pnlVal < 0 ? 'text-red' : 'neutral';
+        const pnlTextBadge = `${pnlPrefix}₹${pnlVal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+        
+        const orderCount = s.positions > 0 ? 1 : 0;
+        const targetValue = cat.details?.target || 35;
+        const multiplierValue = `${s.settings.multiplier || 1}.0x`;
+        const positionCount = s.positions || 0;
+
+        const row = document.createElement('tr');
+        row.setAttribute('data-strat', id);
+        row.innerHTML = `
+          <td>${i}</td>
+          <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${cat.color};margin-right:8px;"></span>${cat.name}</td>
+          <td>
+            <div class="otm-container">
+              <div class="otm-col">
+                <span class="otm-label">O</span>
+                <span class="otm-pill badge-o">${orderCount}</span>
+              </div>
+              <div class="otm-divider">|</div>
+              <div class="otm-col">
+                <span class="otm-label">T</span>
+                <span class="otm-pill badge-t">${targetValue}</span>
+              </div>
+              <div class="otm-divider">|</div>
+              <div class="otm-col">
+                <span class="otm-label">M</span>
+                <span class="otm-pill badge-m">${multiplierValue}</span>
+              </div>
+              <div class="otm-divider">|</div>
+              <div class="otm-col">
+                <span class="otm-label">POS</span>
+                <span class="otm-pill badge-pos">${positionCount}</span>
+              </div>
+              <div class="otm-divider">|</div>
+              <div class="otm-col">
+                <span class="otm-label">PNL</span>
+                <span class="otm-pill badge-pnl ${pnlClassBadge}" id="exec-pnl-${id}">${pnlTextBadge}</span>
+              </div>
+            </div>
+          </td>
+          <td><span class="status-badge ${status}">${status.toUpperCase()}</span></td>
+          <td class="action-cell">
+            <button class="action-trigger" onclick="toggleActionMenu('${id}')">
+              Actions <i data-lucide="chevron-down"></i>
+            </button>
+            <div class="action-menu" id="action-menu-${id}">
+              ${!s.deployed ? `<button class="action-menu-item deploy" onclick="deployStrategy('${id}')"><i data-lucide="play"></i> Deploy Strategy</button>` : `<button class="action-menu-item pause" onclick="pauseStrategy('${id}')"><i data-lucide="pause"></i> Pause Strategy</button>`}
+              <div class="action-divider"></div>
+              <button class="action-menu-item square-off" onclick="openSquareOff('${id}')" ${!s.deployed ? 'disabled style="opacity:0.4;cursor:not-allowed"' : ''}><i data-lucide="x-circle"></i> Square Off</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(row);
+        i++;
+      });
+
+      if (!renderedAny) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="empty-state-td" style="padding: 2.5rem 1rem; text-align: center;">
+              <div class="empty-state-content">
+                <i data-lucide="sliders" class="pulse-icon" style="width: 32px; height: 32px; color: rgba(255,255,255,0.2); margin-bottom: 0.75rem;"></i>
+                <h3 style="font-size: 0.95rem; color: rgba(255,255,255,0.8); font-family: 'Space Grotesk', sans-serif;">No active strategies</h3>
+                <p style="font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-top: 4px;">Go to the Strategies page and toggle a strategy ON to display it here.</p>
+              </div>
+            </td>
+          </tr>
+        `;
+      }
+
+      document.getElementById('active-strat-count').innerText = `${activeCount} ACTIVE`;
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+      closeAllMenus();
+    }
+
+    function toggleActionMenu(id) {
+      const menu = document.getElementById(`action-menu-${id}`);
+      const isOpen = menu.classList.contains('open');
+      closeAllMenus();
+      if (!isOpen) menu.classList.add('open');
+    }
+    function closeAllMenus() {
+      document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('open'));
+    }
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.action-cell')) closeAllMenus();
+    });
+
+    async function deployStrategy(id) {
+      closeAllMenus();
+      const isCustom = id.startsWith('custom_');
+      if (apiConnected && !isCustom) {
+        try {
+          const res = await fetch(`${API_BASE}/user/strategy/control?strategy_id=${id}&action=start`, {
+            method: 'POST', headers: { 'Authorization': `Bearer ${jwtToken}` }
+          });
+          if (!res.ok) { const err = await res.json(); showToast(err.detail || 'Failed to deploy'); return; }
+        } catch { showToast('Server error'); return; }
+      }
+      
+      strategies[id].deployed = true;
+      strategies[id].pnl = 0;
+
+      showToast(`${getMergedCatalog()[id].name} deployed & executing!`);
+      renderPortfolio();
+    }
+
+    async function pauseStrategy(id) {
+      closeAllMenus();
+      const isCustom = id.startsWith('custom_');
+      if (apiConnected && !isCustom) {
+        try {
+          await fetch(`${API_BASE}/user/strategy/control?strategy_id=${id}&action=stop`, {
+            method: 'POST', headers: { 'Authorization': `Bearer ${jwtToken}` }
+          });
+        } catch {}
+      }
+
+      strategies[id].deployed = false;
+      showToast(`${getMergedCatalog()[id].name} paused`);
+      renderPortfolio();
+    }
+
+    function initSquareOff() {
+      document.getElementById('sq-confirm-btn').addEventListener('click', async () => {
+        const id = document.getElementById('sq-strat-id').value;
+        const isCustom = id.startsWith('custom_');
+        if (apiConnected && !isCustom) {
+          try {
+            await fetch(`${API_BASE}/user/strategy/control?strategy_id=${id}&action=stop`, {
+              method: 'POST', headers: { 'Authorization': `Bearer ${jwtToken}` }
+            });
+          } catch {}
+        }
+        
+        strategies[id].deployed = false;
+        strategies[id].pnl = 0;
+        strategies[id].positions = 0;
+
+        document.getElementById('squareoff-modal').classList.add('hidden');
+        showToast(`${getMergedCatalog()[id].name} squared off!`);
+        renderPortfolio();
+        updatePositionsTable();
+      });
+    }
+
+    function openSquareOff(id) {
+      closeAllMenus();
+      const s = strategies[id];
+      document.getElementById('sq-strat-id').value = id;
+      document.getElementById('sq-strat-name').innerText = getMergedCatalog()[id].name;
+      document.getElementById('sq-strat-pnl').innerText = `₹${s.pnl.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+      document.getElementById('sq-strat-pnl').className = s.pnl >= 0 ? 'text-green' : 'text-red';
+      document.getElementById('sq-strat-positions').innerText = s.positions || 1;
+      document.getElementById('squareoff-modal').classList.remove('hidden');
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    function initTools() {
+      document.getElementById('lots-config-btn').addEventListener('click', () => {
+        document.getElementById('lots-size-input').value = globalLots.lot_size;
+        document.getElementById('lots-modal').classList.remove('hidden');
+      });
+
+      document.getElementById('lots-config-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        globalLots.lot_size = +document.getElementById('lots-size-input').value;
+        Object.keys(strategies).forEach(id => {
+          strategies[id].settings.lot_size = globalLots.lot_size;
+        });
+
+        // Also update lots inside localStorage custom strategies
+        const customStrats = JSON.parse(localStorage.getItem('HNX_CUSTOM_STRATEGIES') || '[]');
+        customStrats.forEach(s => {
+          s.settings.lot_size = globalLots.lot_size;
+        });
+        localStorage.setItem('HNX_CUSTOM_STRATEGIES', JSON.stringify(customStrats));
+
+        document.getElementById('lots-tool-desc').innerText = `${globalLots.lot_size} Lot${globalLots.lot_size > 1 ? 's' : ''} configured in all strategies`;
+        document.getElementById('lots-modal').classList.add('hidden');
+        showToast('Lot configuration updated!');
+        renderPortfolio();
+      });
+
+      document.getElementById('mtm-config-btn').addEventListener('click', () => {
+        document.getElementById('mtm-max-profit').value = globalMTM.mtm_max_profit || '';
+        document.getElementById('mtm-max-loss').value = globalMTM.mtm_max_loss || '';
+        document.getElementById('mtm-modal').classList.remove('hidden');
+        lucide.createIcons();
+      });
+
+      document.getElementById('mtm-config-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const profitVal = document.getElementById('mtm-max-profit').value;
+        const lossVal = document.getElementById('mtm-max-loss').value;
+
+        globalMTM.mtm_max_profit = profitVal ? +profitVal : 0;
+        globalMTM.mtm_max_loss = lossVal ? +lossVal : 0;
+
+        // Persist to localStorage
+        localStorage.setItem('HNX_GLOBAL_MTM', JSON.stringify(globalMTM));
+
+        Object.keys(strategies).forEach(id => {
+          const cat = getMergedCatalog()[id];
+          if (!cat.custom) {
+            strategies[id].settings.mtm_max_profit = globalMTM.mtm_max_profit || 999999;
+            strategies[id].settings.mtm_max_loss = globalMTM.mtm_max_loss || 999999;
+          }
+        });
+
+        updateMTMToolDesc();
+        document.getElementById('mtm-modal').classList.add('hidden');
+        showToast('MTM Guard updated!');
+        renderPortfolio();
+      });
+
+      // Initialize default tool description
+      updateMTMToolDesc();
+    }
+
+    function updateMTMToolDesc() {
+      let desc = '';
+      if (!globalMTM.mtm_max_loss && !globalMTM.mtm_max_profit) {
+        desc = 'Disabled (Unlimited Profit & Loss)';
+      } else {
+        const lossStr = globalMTM.mtm_max_loss ? `Max Loss ₹${globalMTM.mtm_max_loss.toLocaleString()}` : 'Unlimited Loss';
+        const profitStr = globalMTM.mtm_max_profit ? `Max Profit ₹${globalMTM.mtm_max_profit.toLocaleString()}` : 'Unlimited Profit';
+        desc = `${lossStr} | ${profitStr}`;
+      }
+      const descEl = document.getElementById('mtm-tool-desc');
+      if (descEl) descEl.innerText = desc;
+    }
+
+    async function tickEngine() {
+      if (!jwtToken) return;
+      totalDayPnl = 0;
+      let activeCount = 0;
+
+        if (apiConnected) {
+        try {
+          const res = await fetch(`${API_BASE}/user/live-pnl`, { headers: { 'Authorization': `Bearer ${jwtToken}` } });
+          if (res.ok) {
+            const d = await res.json();
+            totalDayPnl = d.live_pnl;
+            activeCount = d.active_positions_count;
+          }
+        } catch { apiConnected = false; }
+      } else {
+        // Simulator
+        Object.keys(strategies).forEach(id => {
+          const s = strategies[id];
+          if (!s.active || !s.deployed) return; // Only simulate active & deployed rows!
+          const change = [-1500, -800, 300, 1000, 2000, 3500][Math.floor(Math.random()*6)] * s.settings.lot_size;
+          s.pnl += change;
+          s.positions = 1;
+          totalDayPnl += s.pnl;
+          activeCount++;
+
+          // Record stats dynamically to localStorage
+          updateStrategyLiveStats(id, s.pnl);
+
+          // MTM Guard check — square off ALL
+          if (globalMTM.mtm_max_profit > 0 && totalDayPnl >= globalMTM.mtm_max_profit) {
+            showToast(`[MTM GUARD] Daily profit target ₹${globalMTM.mtm_max_profit.toLocaleString()} hit! All strategies squared off.`);
+            squareOffAll();
+          } else if (globalMTM.mtm_max_loss > 0 && totalDayPnl <= -globalMTM.mtm_max_loss) {
+            showToast(`[MTM GUARD] Daily max loss -₹${globalMTM.mtm_max_loss.toLocaleString()} hit! All strategies squared off.`);
+            squareOffAll();
+          }
+        });
+      }
+
+      // Update PNL display
+      const pnlEl = document.getElementById('live-pnl-value');
+      const statEl = document.getElementById('live-pnl-status');
+      if (pnlEl) {
+        pnlEl.innerText = `₹${totalDayPnl.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+        pnlEl.className = `card-value ${totalDayPnl > 0 ? 'text-green' : totalDayPnl < 0 ? 'text-red' : 'neutral'}`;
+      }
+      if (statEl) {
+        if (activeCount > 0) statEl.innerText = totalDayPnl > 0 ? 'Strategies yielding profits' : 'Strategy in drawdown';
+        else statEl.innerText = 'Awaiting Strategy Deployment';
+      }
+      document.getElementById('positions-count-badge').innerText = `${activeCount} position${activeCount !== 1 ? 's' : ''}`;
+
+      // Update per-strategy PNL in table
+      Object.keys(strategies).forEach(id => {
+        const el = document.getElementById(`exec-pnl-${id}`);
+        if (el) {
+          const v = strategies[id].pnl || 0;
+          const prefix = v > 0 ? '+' : '';
+          el.innerText = `${prefix}₹${v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+          el.className = `otm-pill badge-pnl ${v > 0 ? 'text-green' : v < 0 ? 'text-red' : 'neutral'}`;
+        }
+      });
+
+      updatePositionsTable();
+    }
+
+    function squareOffAll() {
+      Object.keys(strategies).forEach(id => {
+        strategies[id].deployed = false;
+        strategies[id].positions = 0;
+      });
+      renderPortfolio();
+    }
+
+    function updatePositionsTable() {
+      const tbody = document.getElementById('positions-table-body');
+      const activeStrats = Object.keys(strategies).filter(id => strategies[id].active && strategies[id].deployed && strategies[id].positions > 0);
+
+      if (activeStrats.length === 0) {
+        tbody.innerHTML = `
+          <tr id="empty-positions-row">
+            <td colspan="8" class="empty-state-td">
+              <div class="empty-state-content">
+                <i data-lucide="activity" class="pulse-icon"></i>
+                <h3>No positions yet today</h3>
+                <p>Positions will appear here as trades are executed</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+        return;
+      }
+
+      tbody.innerHTML = '';
+      const merged = getMergedCatalog();
+
+      activeStrats.forEach(id => {
+        const s = strategies[id];
+        const cat = merged[id];
+        const entryPrice = (120 + Math.random() * 10).toFixed(2);
+        const qty = s.settings.lot_size * 50;
+        const pnlClass = s.pnl > 0 ? 'text-green' : s.pnl < 0 ? 'text-red' : 'neutral';
+        const statusLabel = s.deployed ? '<span class="status-badge active">OPEN</span>' : '<span class="status-badge stopped">CLOSED</span>';
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${cat.index} CE OPT</td>
+          <td>BUY</td>
+          <td>1</td>
+          <td>₹${entryPrice}</td>
+          <td>—</td>
+          <td>${qty}</td>
+          <td class="${pnlClass}">₹${s.pnl.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+          <td>${statusLabel}</td>
+        `;
+        tbody.appendChild(row);
+      });
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    function updateStrategyLiveStats(id, currentPnl) {
+      const statsKey = `HNX_STRATEGY_STATS_${id}`;
+      let stats = JSON.parse(localStorage.getItem(statsKey));
+      
+      const capital = getMergedCatalog()[id]?.capital || 80000;
+      
+      if (!stats) {
+        // Initialize stats
+        stats = {
+          totalPnl: 0,
+          pnlPercent: 0,
+          winRate: 0,
+          avgDaily: 0,
+          tradingDays: 0,
+          bestDay: 0,
+          worstDay: 0,
+          profitDays: 0,
+          lossDays: 0,
+          maxDD: 0,
+          chartLabels: ['Start'],
+          chartData: [0],
+          monthly: [],
+          daily: []
+        };
+      }
+      
+      stats.totalPnl = Math.round(currentPnl);
+      stats.pnlPercent = Number(((currentPnl / capital) * 100).toFixed(2));
+      
+      const points = stats.chartData;
+      points.push(stats.pnlPercent);
+      if (points.length > 40) points.shift();
+      stats.chartData = points;
+      stats.chartLabels = Array.from({ length: points.length }, (_, i) => `Point ${i + 1}`);
+      
+      // Drawdown
+      let peak = 0;
+      let maxDD = stats.maxDD;
+      points.forEach(p => {
+        if (p > peak) peak = p;
+        const dd = peak - p;
+        if (dd > maxDD) maxDD = dd;
+      });
+      stats.maxDD = Math.round(maxDD * capital / 100);
+      
+      if (currentPnl > stats.bestDay) stats.bestDay = Math.round(currentPnl);
+      if (currentPnl < stats.worstDay) stats.worstDay = Math.round(currentPnl);
+      
+      const todayDateStr = new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
+      const existingDailyIdx = stats.daily.findIndex(d => d.date === todayDateStr);
+      if (existingDailyIdx !== -1) {
+        stats.daily[existingDailyIdx].pnl = Math.round(currentPnl);
+      } else {
+        stats.daily.unshift({ date: todayDateStr, pnl: Math.round(currentPnl) });
+      }
+      
+      stats.tradingDays = stats.daily.length;
+      stats.profitDays = stats.daily.filter(d => d.pnl > 0).length;
+      stats.lossDays = stats.daily.filter(d => d.pnl < 0).length;
+      stats.winRate = stats.tradingDays > 0 ? Math.round((stats.profitDays / stats.tradingDays) * 100) : 0;
+      stats.avgDaily = stats.tradingDays > 0 ? Math.round(stats.totalPnl / stats.tradingDays) : 0;
+      
+      const currentMonthStr = new Date().toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
+      const existingMonthlyIdx = stats.monthly.findIndex(m => m.month === currentMonthStr);
+      if (existingMonthlyIdx !== -1) {
+        stats.monthly[existingMonthlyIdx].pnl = Math.round(currentPnl);
+        stats.monthly[existingMonthlyIdx].winRate = stats.winRate;
+        stats.monthly[existingMonthlyIdx].days = stats.tradingDays;
+      } else {
+        stats.monthly.unshift({
+          month: currentMonthStr,
+          pnl: Math.round(currentPnl),
+          winRate: stats.winRate,
+          days: stats.tradingDays
+        });
+      }
+      
+      localStorage.setItem(statsKey, JSON.stringify(stats));
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HNX Quantum | Order History</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* Filter tabs styling */
+    .filter-tabs {
+      display: flex;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.02);
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .filter-tab {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.6);
+      padding: 8px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .filter-tab:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .filter-tab.active {
+      color: #05060f;
+      background: #00ff87;
+      font-weight: 600;
+      box-shadow: 0 0 12px rgba(0, 255, 135, 0.25);
+    }
+
+    /* Custom Date Container */
+    .custom-date-container {
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .custom-date-container.hidden {
+      display: none;
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    .date-inputs {
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+    .date-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .date-input-group label {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+    }
+    .date-input-group input[type="date"] {
+      background: rgba(5, 6, 15, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      color: #fff;
+      padding: 9px 14px;
+      font-family: 'Space Grotesk', sans-serif;
+      outline: none;
+      font-size: 0.9rem;
+      transition: border-color 0.2s ease;
+    }
+    .date-input-group input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1) opacity(0.5);
+      cursor: pointer;
+    }
+    .date-input-group input[type="date"]::-webkit-calendar-picker-indicator:hover {
+      filter: invert(1) opacity(0.9);
+    }
+    .date-input-group input[type="date"]:focus {
+      border-color: #ff9f00;
+    }
+
+    /* History Summary Cards */
+    .history-summary-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .hist-summary-card {
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 100px;
+      position: relative;
+    }
+    .pnl-summary-card {
+      border-color: rgba(255, 159, 0, 0.12);
+      background: radial-gradient(circle at 100% 0%, rgba(255, 159, 0, 0.04) 0%, transparent 70%), rgba(255, 255, 255, 0.01);
+    }
+    .hist-card-header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+    .btn-sync-stats {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.3);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+    }
+    .btn-sync-stats:hover {
+      color: #ff9f00;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .hist-card-label {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.4);
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    .hist-card-value {
+      font-size: 1.85rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      margin-top: 0.5rem;
+    }
+    .text-green {
+      color: #00ff87 !important;
+    }
+    .text-red {
+      color: #ff4a4a !important;
+    }
+    .neutral {
+      color: #fff;
+    }
+    .btn-filter-apply {
+      padding: 10px 18px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow bg-cyan"></div>
+  <div class="ambient-glow bg-purple"></div>
+
+  <div id="sidebar-overlay" class="sidebar-overlay hidden"></div>
+  <nav id="sidebar-drawer" class="sidebar-drawer">
+    <div class="sidebar-header">
+      <div class="sidebar-logo"><img src="logo.png" alt="HNX" class="brand-logo-img-sm" /><span>HNX Quantum</span></div>
+      <button id="close-sidebar-btn" class="sidebar-close-btn"><i data-lucide="x">✕</i></button>
+    </div>
+    <ul class="sidebar-nav-list">
+      <li><a href="dashboard.html" class="sidebar-link" data-page="dashboard"><i data-lucide="layout-dashboard">📊</i><span>Dashboard</span></a></li>
+      <li><a href="strategy.html" class="sidebar-link" data-page="strategy"><i data-lucide="trending-up">📈</i><span>Strategies</span></a></li>
+      <li><a href="order-history.html" class="sidebar-link" data-page="history"><i data-lucide="history">⏳</i><span>Order History</span></a></li>
+      <li><a href="settings.html" class="sidebar-link" data-page="settings"><i data-lucide="settings">⚙️</i><span>Settings</span></a></li>
+    </ul>
+    <div class="sidebar-footer-actions">
+      <button id="sidebar-logout-btn" class="sidebar-logout-btn"><i data-lucide="log-out">🚪</i><span>Sign Out</span></button>
+    </div>
+  </nav>
+
+  <header class="top-bar">
+    <button id="hamburger-btn" class="hamburger-btn"><i data-lucide="menu">☰</i></button>
+    <div class="top-bar-logo">
+      <img src="logo.png" alt="HNX Quantum" class="brand-logo-img-sm" />
+      <span class="brand-logo-text">HNX Quantum</span>
+    </div>
+    <div class="top-bar-right">
+      <span class="status-pill status-unlinked" id="ip-status-badge">IP Not Assigned</span>
+      <button class="nav-icon-btn"><i data-lucide="bell">🔔</i></button>
+      <div class="avatar-wrapper">
+        <div class="avatar-btn" id="profile-avatar-btn">H</div>
+        <div class="profile-dropdown hidden" id="profile-dropdown-menu">
+          <div class="dropdown-section"><span class="section-label">MY PROFILE</span><h4 id="dropdown-user-name">Trader</h4></div>
+          <div class="profile-details">
+            <div class="detail-item"><i data-lucide="mail">✉️</i><span id="dropdown-user-email">-</span></div>
+            <div class="detail-item"><i data-lucide="phone">📞</i><span id="dropdown-user-phone">-</span></div>
+          </div>
+          <hr class="dropdown-divider" />
+          <a href="#" class="dropdown-item" id="change-password-trigger"><i data-lucide="key-round">🔑</i><span>Change Password</span></a>
+          <a href="#" class="dropdown-item logout" id="logout-btn"><i data-lucide="log-out">🚪</i><span>Sign Out</span></a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    <main class="page-content">
+      <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h1>Order History</h1>
+          <p>Complete order log with entry/exit details</p>
+        </div>
+        <div class="filter-tabs">
+          <button class="filter-tab active" data-range="today">Today</button>
+          <button class="filter-tab" data-range="7days">7 Days</button>
+          <button class="filter-tab" data-range="30days">30 Days</button>
+          <button class="filter-tab" data-range="custom"><i data-lucide="calendar" style="width:14px; height:14px;"></i> Custom</button>
+        </div>
+      </div>
+
+      <!-- Custom Date Pickers Drawer -->
+      <div id="custom-date-drawer" class="custom-date-container hidden">
+        <div class="date-inputs">
+          <div class="date-input-group">
+            <label>From Date</label>
+            <input type="date" id="from-date-input" />
+          </div>
+          <div class="date-input-group">
+            <label>To Date</label>
+            <input type="date" id="to-date-input" />
+          </div>
+          <button class="btn btn-primary btn-filter-apply" id="apply-custom-btn">
+            <i data-lucide="check-square"></i> Apply Filters
+          </button>
+        </div>
+      </div>
+
+      <!-- Analytics Stats Cards -->
+      <div class="history-summary-row">
+        <div class="hist-summary-card">
+          <span class="hist-card-label">Total Orders</span>
+          <div class="hist-card-value" id="stats-total-orders">0</div>
+        </div>
+        <div class="hist-summary-card">
+          <span class="hist-card-label">Win</span>
+          <div class="hist-card-value text-green" id="stats-win">0</div>
+        </div>
+        <div class="hist-summary-card">
+          <span class="hist-card-label">Loss</span>
+          <div class="hist-card-value text-red" id="stats-loss">0</div>
+        </div>
+        <div class="hist-summary-card pnl-summary-card">
+          <div class="hist-card-header-top">
+            <span class="hist-card-label">Total P&amp;L</span>
+            <button class="btn-sync-stats" id="sync-stats-btn" title="Recalculate ledger"><i data-lucide="refresh-cw"></i></button>
+          </div>
+          <div class="hist-card-value neutral" id="stats-total-pnl">₹0.00</div>
+        </div>
+      </div>
+
+      <!-- Orders Logs Table Container -->
+      <div class="premium-card">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>SYMBOL</th>
+                <th>QTY</th>
+                <th>PRICE</th>
+                <th>EXIT REASON</th>
+                <th>P&amp;L</th>
+              </tr>
+            </thead>
+            <tbody id="history-table-body">
+              <tr id="empty-history-row">
+                <td colspan="5" class="empty-state-td">
+                  <div class="empty-state-content">
+                    <i data-lucide="file-x" class="pulse-icon"></i>
+                    <h3>No trades recorded yet</h3>
+                    <p>Executed trades will appear here in real time</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div id="change-password-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header"><h2>Change Password</h2><button id="close-change-pass-btn" class="modal-close">&times;</button></div>
+      <form id="change-password-form">
+        <div class="input-group"><label>Current Password</label><div class="password-wrapper"><input type="password" id="change-curr-password" required placeholder="••••••••••••" /><button type="button" class="eye-toggle"><i data-lucide="eye"></i></button></div></div>
+        <div class="input-group"><label>New Password</label><div class="password-wrapper"><input type="password" id="change-new-password" required placeholder="••••••••••••" /><button type="button" class="eye-toggle"><i data-lucide="eye"></i></button></div><div class="validation-rules"><p id="change-rule-length" class="invalid">❌ Minimum 8 characters</p><p id="change-rule-number" class="invalid">❌ At least 1 number</p><p id="change-rule-special" class="invalid">❌ At least 1 special character</p></div></div>
+        <div class="input-group"><label>Confirm New Password</label><div class="password-wrapper"><input type="password" id="change-conf-password" required placeholder="••••••••••••" /><button type="button" class="eye-toggle"><i data-lucide="eye"></i></button></div></div>
+        <button type="submit" class="btn btn-primary btn-block"><i data-lucide="check"></i> Update Password</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="notification-toast" class="toast hidden"></div>
+  <button class="support-float-btn"><i data-lucide="headphones"></i></button>
+
+  <script src="app.js"></script>
+  <script>
+    let activeRange = 'today';
+    let loadedTrades = [];
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      await bootPage("history");
+      initDefaultDates();
+      initFilterTabs();
+      await fetchTrades();
+    });
+
+    function initDefaultDates() {
+      const today = new Date();
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(today.getDate() - 7);
+
+      document.getElementById('from-date-input').value = oneWeekAgo.toISOString().split('T')[0];
+      document.getElementById('to-date-input').value = today.toISOString().split('T')[0];
+    }
+
+    function initFilterTabs() {
+      const tabs = document.querySelectorAll('.filter-tab');
+      const customDrawer = document.getElementById('custom-date-drawer');
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', async () => {
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+
+          const range = tab.getAttribute('data-range');
+          activeRange = range;
+
+          if (range === 'custom') {
+            customDrawer.classList.remove('hidden');
+          } else {
+            customDrawer.classList.add('hidden');
+            await fetchTrades();
+          }
+        });
+      });
+
+      // Apply button for custom dates
+      document.getElementById('apply-custom-btn').addEventListener('click', async () => {
+        await fetchTrades();
+      });
+
+      // Sync button
+      document.getElementById('sync-stats-btn').addEventListener('click', async () => {
+        showToast('Syncing trade stats...');
+        await fetchTrades();
+      });
+    }
+
+    async function fetchTrades() {
+      if (apiConnected) {
+        try {
+          let url = `${API_BASE}/user/trades?range=${activeRange}`;
+          if (activeRange === 'custom') {
+            const fromD = document.getElementById('from-date-input').value;
+            const toD = document.getElementById('to-date-input').value;
+            url += `&from_date=${fromD}&to_date=${toD}`;
+          }
+          const res = await fetch(url, { headers: { 'Authorization': `Bearer ${jwtToken}` } });
+          if (res.ok) {
+            loadedTrades = await res.json();
+          } else {
+            loadedTrades = [];
+          }
+        } catch {
+          loadedTrades = [];
+        }
+      } else {
+        // Realistic Simulator Mode
+        const fromD = document.getElementById('from-date-input').value;
+        const toD = document.getElementById('to-date-input').value;
+        loadedTrades = generateMockTrades(activeRange, fromD, toD);
+      }
+
+      renderTradesTable();
+      calculateAndRenderStats();
+    }
+
+    function generateMockTrades(range, fromDate, toDate) {
+      let count = 0;
+      if (range === 'today') count = 2;
+      else if (range === '7days') count = 9;
+      else if (range === '30days') count = 24;
+      else if (range === 'custom') {
+        const start = new Date(fromDate);
+        const end = new Date(toDate);
+        const diffTime = Math.abs(end - start);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
+        count = Math.min(30, Math.max(1, Math.round(diffDays * 1.2)));
+      }
+
+      const symbols = [
+        { name: 'NIFTY 28MAY 22400 CE', index: 'NIFTY' },
+        { name: 'BANKNIFTY 28MAY 48100 PE', index: 'BANKNIFTY' },
+        { name: 'NIFTY 28MAY 22500 CE', index: 'NIFTY' },
+        { name: 'BANKNIFTY 28MAY 48200 CE', index: 'BANKNIFTY' },
+        { name: 'NIFTY 28MAY 22300 PE', index: 'NIFTY' }
+      ];
+
+      const exitReasons = [
+        'MTM Target Hit',
+        'EMA Cross Trigger',
+        'RSI Overbought Target',
+        'Daily Target Guard Hit',
+        'Emergency Square Off',
+        'Trailing Stop Loss Hit'
+      ];
+
+      const trades = [];
+      const baseDate = new Date();
+
+      for (let i = 0; i < count; i++) {
+        const symObj = symbols[i % symbols.length];
+        const qty = symObj.index === 'NIFTY' ? (1 + Math.floor(Math.random() * 4)) * 50 : (1 + Math.floor(Math.random() * 4)) * 15;
+        const price = +(110 + Math.random() * 90).toFixed(2);
+        
+        // 68% win rate for simulated ledger feedback
+        const isWin = Math.random() < 0.68;
+        const pnlMultiplier = isWin ? (0.08 + Math.random() * 0.22) : -(0.04 + Math.random() * 0.12);
+        const pnl = Math.round(price * qty * pnlMultiplier);
+
+        trades.push({
+          symbol: symObj.name,
+          qty: qty,
+          price: `₹${price.toLocaleString(undefined, {minimumFractionDigits:2})}`,
+          exitReason: isWin ? exitReasons[Math.floor(Math.random()*3)] : exitReasons[3 + Math.floor(Math.random()*3)],
+          pnl: pnl
+        });
+      }
+      return trades;
+    }
+
+    function renderTradesTable() {
+      const tbody = document.getElementById('history-table-body');
+      if (loadedTrades.length === 0) {
+        tbody.innerHTML = `
+          <tr id="empty-history-row">
+            <td colspan="5" class="empty-state-td">
+              <div class="empty-state-content">
+                <i data-lucide="file-x" class="pulse-icon"></i>
+                <h3>No trades recorded yet</h3>
+                <p>Executed trades will appear here in real time</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+        return;
+      }
+
+      tbody.innerHTML = '';
+      loadedTrades.forEach(t => {
+        const row = document.createElement('tr');
+        const pnlVal = t.pnl || 0;
+        const pnlClass = pnlVal > 0 ? 'text-green' : pnlVal < 0 ? 'text-red' : 'neutral';
+        const pnlPrefix = pnlVal > 0 ? '+' : '';
+        const pnlText = `${pnlPrefix}₹${pnlVal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+
+        row.innerHTML = `
+          <td><strong>${t.symbol}</strong></td>
+          <td>${t.qty}</td>
+          <td>${t.price}</td>
+          <td><span class="status-badge active" style="background: rgba(255, 255, 255, 0.05); color: rgba(255,255,255,0.7);">${t.exitReason}</span></td>
+          <td class="${pnlClass}">${pnlText}</td>
+        `;
+        tbody.appendChild(row);
+      });
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    function calculateAndRenderStats() {
+      const total = loadedTrades.length;
+      let wins = 0;
+      let losses = 0;
+      let totalPnl = 0;
+
+      loadedTrades.forEach(t => {
+        const pnlVal = t.pnl || 0;
+        totalPnl += pnlVal;
+        if (pnlVal > 0) wins++;
+        else if (pnlVal < 0) losses++;
+      });
+
+      document.getElementById('stats-total-orders').innerText = total;
+      document.getElementById('stats-win').innerText = wins;
+      document.getElementById('stats-loss').innerText = losses;
+
+      const pnlEl = document.getElementById('stats-total-pnl');
+      pnlEl.innerText = `${totalPnl >= 0 ? '+' : ''}₹${totalPnl.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+      pnlEl.className = `hist-card-value ${totalPnl > 0 ? 'text-green' : totalPnl < 0 ? 'text-red' : 'neutral'}`;
+    }
+  </script>
+</body>
+</html>
