@@ -16,8 +16,11 @@ jobs:
           password: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            # Navigate to Nginx/Apache web root directory
-            cd /var/www/hnxquantum-frontend || cd /var/www/html || cd ~/smart3algo-frontend || cd /home/ubuntu/smart3algo-frontend
+            # Navigate to frontend directory
+            cd ~/hnx_Frontend
             
             # Fetch and sync the latest frontend files from GitHub
             git pull origin main
+            
+            # Copy all updated files to the live Nginx directory
+            cp -r * /var/www/html/
