@@ -768,7 +768,9 @@
 
   <!-- Auth-only Javascript (no shared app.js needed here) -->
   <script>
-    const API_BASE = `http://${window.location.hostname || "localhost"}:8000`;
+    const API_BASE = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+      ? "http://localhost:8000"
+      : `${window.location.origin}/api`;
     let apiConnected = false;
 
     // If already logged in, go straight to dashboard
@@ -792,7 +794,7 @@
     }
 
     document.addEventListener("DOMContentLoaded", async () => {
-      if (typeof lucide !== 'undefined') lucide.createIcons();
+      lucide.createIcons();
       await checkAPI();
 
       // Eye toggles
@@ -802,7 +804,7 @@
           if (!inp) return;
           inp.type = inp.type === "password" ? "text" : "password";
           btn.innerHTML = inp.type === "password" ? '<i data-lucide="eye"></i>' : '<i data-lucide="eye-off"></i>';
-          if (typeof lucide !== 'undefined') lucide.createIcons();
+          lucide.createIcons();
         });
       });
 

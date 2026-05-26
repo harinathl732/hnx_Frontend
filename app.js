@@ -3,7 +3,9 @@
 // Used by: dashboard.html, strategy.html, order-history.html, settings.html
 // ==========================================================================
 
-const API_BASE = `http://${window.location.hostname || "localhost"}:8000`;
+const API_BASE = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+  ? "http://localhost:8000"
+  : `${window.location.origin}/api`;
 let jwtToken = localStorage.getItem("token") || null;
 let apiConnected = false;
 let userEmail = localStorage.getItem("user_email") || "";
@@ -90,15 +92,37 @@ function updateBrokerStatus(linked) {
   const connectBtn = document.getElementById("connect-broker-btn");
 
   if (badge) {
-    badge.innerText   = linked ? "IP Assigned" : "IP Not Assigned";
+    badge.innerText   = linked ? "Zerodha Linked" : "Zerodha Not Linked";
     badge.className   = `status-pill ${linked ? "status-linked" : "status-unlinked"}`;
   }
-  if (margin)     margin.innerText = linked ? "₹1,50,000.00" : "₹0.00";
+  if (margin)     margin.innerText = linked ? "Fetching..." : "₹0.00";
   if (connectBtn) {
     connectBtn.innerText = linked ? "CONNECTED" : "CONNECT";
     linked ? connectBtn.classList.add("linked") : connectBtn.classList.remove("linked");
   }
   if (typeof lucide !== "undefined") lucide.createIcons();
+  // Fetch real margin if linked
+  if (linked) fetchRealMargin();
+}
+
+// Fetch REAL available margin from Zerodha via backend
+async function fetchRealMargin() {
+  if (!apiConnected || !jwtToken) return;
+  const marginEl = document.getElementById("margin-value");
+  try {
+    const res = await fetch(`${API_BASE}/user/margin`, {
+      headers: { "Authorization": `Bearer ${jwtToken}` }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const available = data.available || 0;
+      if (marginEl) {
+        marginEl.innerText = `₹${Number(available).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      }
+    }
+  } catch (e) {
+    console.warn("Could not fetch real margin:", e);
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -286,7 +310,7 @@ function resetChangePassForm() {
 // --------------------------------------------------------------------------
 async function bootPage(pageName) {
   requireAuth();
-  if (typeof lucide !== 'undefined') lucide.createIcons();
+  lucide.createIcons();
   initHamburgerMenu();
   setActiveSidebarLink(pageName);
   initProfileDropdown();

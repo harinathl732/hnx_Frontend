@@ -17,39 +17,39 @@
   <nav id="sidebar-drawer" class="sidebar-drawer">
     <div class="sidebar-header">
       <div class="sidebar-logo"><img src="logo.png" alt="HNX" class="brand-logo-img-sm" /><span>HNX Quantum</span></div>
-      <button id="close-sidebar-btn" class="sidebar-close-btn"><i data-lucide="x">✕</i></button>
+      <button id="close-sidebar-btn" class="sidebar-close-btn"><i data-lucide="x"></i></button>
     </div>
     <ul class="sidebar-nav-list">
-      <li><a href="dashboard.html" class="sidebar-link" data-page="dashboard"><i data-lucide="layout-dashboard">📊</i><span>Dashboard</span></a></li>
-      <li><a href="strategy.html" class="sidebar-link" data-page="strategy"><i data-lucide="trending-up">📈</i><span>Strategies</span></a></li>
-      <li><a href="order-history.html" class="sidebar-link" data-page="history"><i data-lucide="history">⏳</i><span>Order History</span></a></li>
-      <li><a href="settings.html" class="sidebar-link" data-page="settings"><i data-lucide="settings">⚙️</i><span>Settings</span></a></li>
+      <li><a href="dashboard.html" class="sidebar-link" data-page="dashboard"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a></li>
+      <li><a href="strategy.html" class="sidebar-link" data-page="strategy"><i data-lucide="trending-up"></i><span>Strategies</span></a></li>
+      <li><a href="order-history.html" class="sidebar-link" data-page="history"><i data-lucide="history"></i><span>Order History</span></a></li>
+      <li><a href="settings.html" class="sidebar-link" data-page="settings"><i data-lucide="settings"></i><span>Settings</span></a></li>
     </ul>
     <div class="sidebar-footer-actions">
-      <button id="sidebar-logout-btn" class="sidebar-logout-btn"><i data-lucide="log-out">🚪</i><span>Sign Out</span></button>
+      <button id="sidebar-logout-btn" class="sidebar-logout-btn"><i data-lucide="log-out"></i><span>Sign Out</span></button>
     </div>
   </nav>
 
   <header class="top-bar">
-    <button id="hamburger-btn" class="hamburger-btn"><i data-lucide="menu">☰</i></button>
+    <button id="hamburger-btn" class="hamburger-btn"><i data-lucide="menu"></i></button>
     <div class="top-bar-logo">
       <img src="logo.png" alt="HNX Quantum" class="brand-logo-img-sm" />
       <span class="brand-logo-text">HNX Quantum</span>
     </div>
     <div class="top-bar-right">
       <span class="status-pill status-unlinked" id="ip-status-badge">IP Not Assigned</span>
-      <button class="nav-icon-btn"><i data-lucide="bell">🔔</i></button>
+      <button class="nav-icon-btn"><i data-lucide="bell"></i></button>
       <div class="avatar-wrapper">
         <div class="avatar-btn" id="profile-avatar-btn">H</div>
         <div class="profile-dropdown hidden" id="profile-dropdown-menu">
           <div class="dropdown-section"><span class="section-label">MY PROFILE</span><h4 id="dropdown-user-name">Trader</h4></div>
           <div class="profile-details">
-            <div class="detail-item"><i data-lucide="mail">✉️</i><span id="dropdown-user-email">-</span></div>
-            <div class="detail-item"><i data-lucide="phone">📞</i><span id="dropdown-user-phone">-</span></div>
+            <div class="detail-item"><i data-lucide="mail"></i><span id="dropdown-user-email">-</span></div>
+            <div class="detail-item"><i data-lucide="phone"></i><span id="dropdown-user-phone">-</span></div>
           </div>
           <hr class="dropdown-divider" />
-          <a href="#" class="dropdown-item" id="change-password-trigger"><i data-lucide="key-round">🔑</i><span>Change Password</span></a>
-          <a href="#" class="dropdown-item logout" id="logout-btn"><i data-lucide="log-out">🚪</i><span>Sign Out</span></a>
+          <a href="#" class="dropdown-item" id="change-password-trigger"><i data-lucide="key-round"></i><span>Change Password</span></a>
+          <a href="#" class="dropdown-item logout" id="logout-btn"><i data-lucide="log-out"></i><span>Sign Out</span></a>
         </div>
       </div>
     </div>
@@ -175,7 +175,7 @@
       } else {
         btn.disabled = false; btn.innerHTML = '<i data-lucide="link"></i> Authenticate Active Session';
       }
-      if (typeof lucide !== 'undefined') lucide.createIcons();
+      lucide.createIcons();
     }
 
     function initSettingsForms() {

@@ -114,39 +114,39 @@
   <nav id="sidebar-drawer" class="sidebar-drawer">
     <div class="sidebar-header">
       <div class="sidebar-logo"><img src="logo.png" alt="HNX" class="brand-logo-img-sm" /><span>HNX Quantum</span></div>
-      <button id="close-sidebar-btn" class="sidebar-close-btn"><i data-lucide="x">✕</i></button>
+      <button id="close-sidebar-btn" class="sidebar-close-btn"><i data-lucide="x"></i></button>
     </div>
     <ul class="sidebar-nav-list">
-      <li><a href="dashboard.html" class="sidebar-link" data-page="dashboard"><i data-lucide="layout-dashboard">📊</i><span>Dashboard</span></a></li>
-      <li><a href="strategy.html" class="sidebar-link" data-page="strategy"><i data-lucide="trending-up">📈</i><span>Strategies</span></a></li>
-      <li><a href="order-history.html" class="sidebar-link" data-page="history"><i data-lucide="history">⏳</i><span>Order History</span></a></li>
-      <li><a href="settings.html" class="sidebar-link" data-page="settings"><i data-lucide="settings">⚙️</i><span>Settings</span></a></li>
+      <li><a href="dashboard.html" class="sidebar-link" data-page="dashboard"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a></li>
+      <li><a href="strategy.html" class="sidebar-link" data-page="strategy"><i data-lucide="trending-up"></i><span>Strategies</span></a></li>
+      <li><a href="order-history.html" class="sidebar-link" data-page="history"><i data-lucide="history"></i><span>Order History</span></a></li>
+      <li><a href="settings.html" class="sidebar-link" data-page="settings"><i data-lucide="settings"></i><span>Settings</span></a></li>
     </ul>
     <div class="sidebar-footer-actions">
-      <button id="sidebar-logout-btn" class="sidebar-logout-btn"><i data-lucide="log-out">🚪</i><span>Sign Out</span></button>
+      <button id="sidebar-logout-btn" class="sidebar-logout-btn"><i data-lucide="log-out"></i><span>Sign Out</span></button>
     </div>
   </nav>
 
   <header class="top-bar">
-    <button id="hamburger-btn" class="hamburger-btn"><i data-lucide="menu">☰</i></button>
+    <button id="hamburger-btn" class="hamburger-btn"><i data-lucide="menu"></i></button>
     <div class="top-bar-logo">
       <img src="logo.png" alt="HNX Quantum" class="brand-logo-img-sm" />
       <span class="brand-logo-text">HNX Quantum</span>
     </div>
     <div class="top-bar-right">
       <span class="status-pill status-unlinked" id="ip-status-badge">IP Not Assigned</span>
-      <button class="nav-icon-btn"><i data-lucide="bell">🔔</i></button>
+      <button class="nav-icon-btn"><i data-lucide="bell"></i></button>
       <div class="avatar-wrapper">
         <div class="avatar-btn" id="profile-avatar-btn">H</div>
         <div class="profile-dropdown hidden" id="profile-dropdown-menu">
           <div class="dropdown-section"><span class="section-label">MY PROFILE</span><h4 id="dropdown-user-name">Trader</h4></div>
           <div class="profile-details">
-            <div class="detail-item"><i data-lucide="mail">✉️</i><span id="dropdown-user-email">-</span></div>
-            <div class="detail-item"><i data-lucide="phone">📞</i><span id="dropdown-user-phone">-</span></div>
+            <div class="detail-item"><i data-lucide="mail"></i><span id="dropdown-user-email">-</span></div>
+            <div class="detail-item"><i data-lucide="phone"></i><span id="dropdown-user-phone">-</span></div>
           </div>
           <hr class="dropdown-divider" />
-          <a href="#" class="dropdown-item" id="change-password-trigger"><i data-lucide="key-round">🔑</i><span>Change Password</span></a>
-          <a href="#" class="dropdown-item logout" id="logout-btn"><i data-lucide="log-out">🚪</i><span>Sign Out</span></a>
+          <a href="#" class="dropdown-item" id="change-password-trigger"><i data-lucide="key-round"></i><span>Change Password</span></a>
+          <a href="#" class="dropdown-item logout" id="logout-btn"><i data-lucide="log-out"></i><span>Sign Out</span></a>
         </div>
       </div>
     </div>
@@ -174,11 +174,10 @@
   <div id="create-strat-modal" class="modal-backdrop hidden">
     <div class="modal-card" style="max-width: 600px;">
       <div class="modal-header">
-        <h2 id="modal-title-text">Create Custom Strategy</h2>
+        <h2>Create Custom Strategy</h2>
         <button id="close-create-modal-btn" class="modal-close" onclick="document.getElementById('create-strat-modal').classList.add('hidden')">&times;</button>
       </div>
       <form id="create-strategy-form" style="max-height: 75vh; overflow-y: auto; padding-right: 8px; text-align: left;">
-        <input type="hidden" id="edit-strat-id" value="" />
         <div class="input-group">
           <label>Strategy Name</label>
           <input type="text" id="new-strat-name" required placeholder="e.g. Algo version of time formula 35pts" />
@@ -288,7 +287,7 @@
           <label>Logic Description & Rules</label>
           <textarea id="new-strat-rules" rows="3" class="custom-textarea" placeholder="e.g. Max 2 Trades Per Side PE/CE. 30 Points Reach SL Shift To BE. SL Hit Next Entry Lot Size Multiple."></textarea>
         </div>
-        <button type="submit" id="submit-btn-text" class="btn btn-primary btn-block" style="margin-top: 1rem;"><i data-lucide="plus-circle"></i> Create Strategy</button>
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1rem;"><i data-lucide="plus-circle"></i> Create Strategy</button>
       </form>
     </div>
   </div>
@@ -523,21 +522,6 @@
         delete merged[id];
       });
 
-      // Load custom overrides for system strategies
-      const systemCustom = JSON.parse(localStorage.getItem('HNX_SYSTEM_STRATEGIES_CUSTOM') || '{}');
-      Object.keys(systemCustom).forEach(id => {
-        if (merged[id]) {
-          merged[id] = {
-            ...merged[id],
-            name: systemCustom[id].name,
-            index: systemCustom[id].index,
-            capital: systemCustom[id].capital,
-            desc: systemCustom[id].desc,
-            details: systemCustom[id].details
-          };
-        }
-      });
-
       const customStrats = JSON.parse(localStorage.getItem('HNX_CUSTOM_STRATEGIES') || '[]');
       customStrats.forEach(s => {
         if (deletedIds.includes(s.id)) return;
@@ -561,14 +545,11 @@
       // Load active system strategy states from localStorage toggles
       const systemActive = JSON.parse(localStorage.getItem('HNX_SYSTEM_STRATEGIES_ACTIVE') || '{}');
 
-      // Load custom system strategy override details
-      const systemCustom = JSON.parse(localStorage.getItem('HNX_SYSTEM_STRATEGIES_CUSTOM') || '{}');
-
       // System preconfigured defaults
       Object.keys(CATALOG).forEach(id => {
         strategies[id] = {
           active: systemActive[id] || false,
-          settings: systemCustom[id]?.settings || { lot_size: 1, multiplier: 1, mtm_max_profit: 8000, mtm_max_loss: 3000 }
+          settings: { lot_size: 1, multiplier: 1, mtm_max_profit: 35, mtm_max_loss: 20 }
         };
       });
 
@@ -612,26 +593,19 @@
         card.id = `strat-${id}`;
 
         const lotSize = s.settings.lot_size;
-        const targetValue = cat.details?.target || 35;
-        const slValue = cat.details?.sl || 15;
+        const targetValue = cat.custom ? (cat.details.target || 35) : (s.settings.mtm_max_profit || 35);
+        const slValue = cat.custom ? (cat.details.sl || 20) : (s.settings.mtm_max_loss || 20);
         const capitalValue = cat.capital || 80000;
 
         let bodyContent = '';
-        if (cat.custom || (cat.details && Object.keys(cat.details).length > 0)) {
-          const slModeText = cat.details?.sl_mode || 'Default (15 pts)';
-          const tfText = cat.details?.timeframe || '1 Min';
-          const entryTimeText = cat.details?.entry_time || '9:17 onwards';
-          const trailingText = cat.details?.trailing_trigger || 30;
-          const martCapText = cat.details?.martingale_cap || 5;
-          const rulesText = cat.details?.rules || '';
-
+        if (cat.custom) {
           bodyContent = `
-            <div style="font-family:'Space Grotesk', sans-serif; font-weight:600; color:#fff; margin-bottom:4px;">Target: ${targetValue} Points | SL Mode: ${slModeText}</div>
+            <div style="font-family:'Space Grotesk', sans-serif; font-weight:600; color:#fff; margin-bottom:4px;">Target: ${targetValue} Points | SL Mode: ${cat.details.sl_mode || 'Default (15 pts)'}</div>
             <div style="font-style:italic; color:rgba(255,255,255,0.5); font-size:0.8rem; margin-bottom:6px;">${cat.desc}</div>
             <div style="color:rgba(255,255,255,0.7); display:flex; flex-direction:column; gap:2px;">
-              <div>• Timeframe: ${tfText} | Timing: ${entryTimeText}</div>
-              <div>• Trailing Trigger: ${trailingText} pts | Martingale Cap: ${martCapText} lots</div>
-              ${rulesText ? `<div style="border-top:1px dashed rgba(255,255,255,0.06); margin-top:4px; padding-top:4px; color:#ff9f00;">Rules: ${rulesText}</div>` : ''}
+              <div>• Timeframe: ${cat.details.timeframe || '1 Min'} | Timing: ${cat.details.entry_time || '9:17 onwards'}</div>
+              <div>• Trailing Trigger: ${cat.details.trailing_trigger || 30} pts | Martingale Cap: ${cat.details.martingale_cap || 5} lots</div>
+              ${cat.details.rules ? `<div style="border-top:1px dashed rgba(255,255,255,0.06); margin-top:4px; padding-top:4px; color:#ff9f00;">Rules: ${cat.details.rules}</div>` : ''}
             </div>
           `;
         } else {
@@ -684,7 +658,6 @@
             </div>
             <div style="display: flex; gap: 0.5rem; align-items: center;">
               <button class="statistics-btn" onclick="openPerformanceStats('${id}')"><i data-lucide="bar-chart-2" style="width:14px; height:14px;"></i> STATISTICS</button>
-              <button class="btn btn-secondary btn-sm" style="padding: 6px 12px; font-size: 0.75rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; cursor: pointer;" onclick="editStrategy('${id}')"><i data-lucide="edit" style="width:13px; height:13px;"></i> EDIT</button>
               <button class="btn btn-danger btn-sm" style="padding: 6px 12px; font-size: 0.75rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.25); color: #ef4444;" onclick="deleteStrategy('${id}')"><i data-lucide="trash-2" style="width:13px; height:13px;"></i> DELETE</button>
             </div>
           </div>
@@ -692,49 +665,9 @@
         container.appendChild(card);
       });
 
-      if (typeof lucide !== 'undefined') lucide.createIcons();
+      lucide.createIcons();
       bindEvents();
     }
-
-    function editStrategy(id) {
-      const cat = getMergedCatalog()[id];
-      const s = strategies[id];
-      if (!cat || !s) return;
-
-      // Populate Form
-      document.getElementById('edit-strat-id').value = id;
-      document.getElementById('new-strat-name').value = cat.name;
-      document.getElementById('new-strat-underlying').value = cat.index;
-      document.getElementById('new-strat-ordertype').value = cat.details?.order_type || 'MIS';
-      document.getElementById('new-strat-contracts').value = cat.details?.contracts || 'Current Week';
-      document.getElementById('new-strat-timeframe').value = cat.details?.timeframe || '1 Min';
-      document.getElementById('new-strat-lot-size').value = s.settings.lot_size || 1;
-      document.getElementById('new-strat-entrytime').value = cat.details?.entry_time || '09:17';
-      
-      const slModeVal = cat.details?.sl_mode || 'Default (15 pts)';
-      if (slModeVal === 'Default (15 pts)') {
-        document.getElementById('sl-mode-default').checked = true;
-      } else {
-        document.getElementById('sl-mode-alt').checked = true;
-      }
-
-      document.getElementById('new-strat-target').value = cat.details?.target || s.settings.mtm_max_profit || 35;
-      document.getElementById('new-strat-trailing').value = cat.details?.trailing_trigger || 30;
-      document.getElementById('new-strat-martingale-cap').value = cat.details?.martingale_cap || 5;
-      document.getElementById('new-strat-capital').value = cat.capital || 80000;
-      document.getElementById('new-strat-mtm-profit').value = s.settings.mtm_max_profit || 8000;
-      document.getElementById('new-strat-mtm-loss').value = s.settings.mtm_max_loss || 3000;
-      document.getElementById('new-strat-rules').value = cat.details?.rules || '';
-
-      // Update Modal Header & Submit Button Text
-      document.getElementById('modal-title-text').innerText = 'Edit Strategy';
-      document.getElementById('submit-btn-text').innerHTML = '<i data-lucide="check-circle"></i> Update Strategy';
-
-      // Open Modal
-      document.getElementById('create-strat-modal').classList.remove('hidden');
-      if (typeof lucide !== 'undefined') lucide.createIcons();
-    }
-    window.editStrategy = editStrategy;
 
     function initCreateStrategy() {
       const openBtn = document.getElementById('open-create-strat-btn');
@@ -754,15 +687,8 @@
       }
 
       openBtn?.addEventListener('click', () => {
-        // Reset form & hidden edit input
-        document.getElementById('edit-strat-id').value = '';
-        form.reset();
-
-        document.getElementById('modal-title-text').innerText = 'Create Custom Strategy';
-        document.getElementById('submit-btn-text').innerHTML = '<i data-lucide="plus-circle"></i> Create Strategy';
-
         modal?.classList.remove('hidden');
-        if (typeof lucide !== 'undefined') lucide.createIcons();
+        lucide.createIcons();
       });
 
       form?.addEventListener('submit', (e) => {
@@ -784,111 +710,43 @@
         const mtmLoss = +document.getElementById('new-strat-mtm-loss').value;
         const rules = document.getElementById('new-strat-rules').value;
 
-        const editId = document.getElementById('edit-strat-id').value;
+        const id = `custom_${Date.now()}`;
         const sl = slMode === 'Default (15 pts)' ? 15 : 20;
-
-        if (editId) {
-          // Editing existing strategy
-          if (editId.startsWith('custom_')) {
-            const customStrats = JSON.parse(localStorage.getItem('HNX_CUSTOM_STRATEGIES') || '[]');
-            const idx = customStrats.findIndex(s => s.id === editId);
-            if (idx !== -1) {
-              customStrats[idx].name = name;
-              customStrats[idx].index = index;
-              customStrats[idx].capital = capital;
-              customStrats[idx].desc = `Intraday buying breakout. Target: ${target} pts | Trailing: ${trailing} pts.`;
-              customStrats[idx].settings = {
-                lot_size: lotSize,
-                multiplier: 1,
-                mtm_enabled: true,
-                mtm_max_profit: mtmProfit,
-                mtm_max_loss: mtmLoss
-              };
-              customStrats[idx].details = {
-                target: target,
-                sl: sl,
-                sl_mode: slMode,
-                trailing_trigger: trailing,
-                martingale_cap: martingaleCap,
-                order_type: ordertype,
-                contracts: contracts,
-                timeframe: timeframe,
-                entry_time: entryTime,
-                rules: rules
-              };
-              localStorage.setItem('HNX_CUSTOM_STRATEGIES', JSON.stringify(customStrats));
-            }
-          } else {
-            // Editing preconfigured system strategy override
-            const systemCustom = JSON.parse(localStorage.getItem('HNX_SYSTEM_STRATEGIES_CUSTOM') || '{}');
-            systemCustom[editId] = {
-              name: name,
-              index: index,
-              capital: capital,
-              desc: `Intraday buying breakout. Target: ${target} pts | Trailing: ${trailing} pts.`,
-              settings: {
-                lot_size: lotSize,
-                multiplier: 1,
-                mtm_enabled: true,
-                mtm_max_profit: mtmProfit,
-                mtm_max_loss: mtmLoss
-              },
-              details: {
-                target: target,
-                sl: sl,
-                sl_mode: slMode,
-                trailing_trigger: trailing,
-                martingale_cap: martingaleCap,
-                order_type: ordertype,
-                contracts: contracts,
-                timeframe: timeframe,
-                entry_time: entryTime,
-                rules: rules
-              }
-            };
-            localStorage.setItem('HNX_SYSTEM_STRATEGIES_CUSTOM', JSON.stringify(systemCustom));
+        
+        const newStrategy = {
+          id: id,
+          name: name,
+          index: index,
+          active: false, // OFF by default so it doesn't show on dashboard until toggled!
+          capital: capital,
+          color: index === 'NIFTY' ? '#818cf8' : '#f472b6',
+          desc: `Intraday buying breakout. Target: ${target} pts | Trailing: ${trailing} pts.`,
+          settings: {
+            lot_size: lotSize,
+            multiplier: 1,
+            mtm_enabled: true,
+            mtm_max_profit: mtmProfit,
+            mtm_max_loss: mtmLoss
+          },
+          details: {
+            target: target,
+            sl: sl,
+            sl_mode: slMode,
+            trailing_trigger: trailing,
+            martingale_cap: martingaleCap,
+            order_type: ordertype,
+            contracts: contracts,
+            timeframe: timeframe,
+            entry_time: entryTime,
+            rules: rules
           }
+        };
 
-          showToast('Strategy updated successfully!');
-        } else {
-          // Creating a new custom strategy
-          const id = `custom_${Date.now()}`;
-          const newStrategy = {
-            id: id,
-            name: name,
-            index: index,
-            active: false, // OFF by default so it doesn't show on dashboard until toggled!
-            capital: capital,
-            color: index === 'NIFTY' ? '#818cf8' : '#f472b6',
-            desc: `Intraday buying breakout. Target: ${target} pts | Trailing: ${trailing} pts.`,
-            settings: {
-              lot_size: lotSize,
-              multiplier: 1,
-              mtm_enabled: true,
-              mtm_max_profit: mtmProfit,
-              mtm_max_loss: mtmLoss
-            },
-            details: {
-              target: target,
-              sl: sl,
-              sl_mode: slMode,
-              trailing_trigger: trailing,
-              martingale_cap: martingaleCap,
-              order_type: ordertype,
-              contracts: contracts,
-              timeframe: timeframe,
-              entry_time: entryTime,
-              rules: rules
-            }
-          };
+        const customStrats = JSON.parse(localStorage.getItem('HNX_CUSTOM_STRATEGIES') || '[]');
+        customStrats.push(newStrategy);
+        localStorage.setItem('HNX_CUSTOM_STRATEGIES', JSON.stringify(customStrats));
 
-          const customStrats = JSON.parse(localStorage.getItem('HNX_CUSTOM_STRATEGIES') || '[]');
-          customStrats.push(newStrategy);
-          localStorage.setItem('HNX_CUSTOM_STRATEGIES', JSON.stringify(customStrats));
-
-          showToast('Strategy Created! Toggle it ON to sync with Dashboard.');
-        }
-
+        showToast('Strategy Created! Toggle it ON to sync with Dashboard.');
         modal?.classList.add('hidden');
         form.reset();
 
