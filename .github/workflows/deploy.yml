@@ -1,0 +1,23 @@
+name: Deploy Frontend to Server
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy using SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            # Navigate to Nginx/Apache web root directory
+            cd /var/www/hnxquantum-frontend || cd /var/www/html || cd ~/smart3algo-frontend || cd /home/ubuntu/smart3algo-frontend
+            
+            # Fetch and sync the latest frontend files from GitHub
+            git pull origin main
