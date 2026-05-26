@@ -147,6 +147,13 @@ function logout() {
   window.location.href = "index.html";
 }
 
+// Sync logout across all open tabs in real-time
+window.addEventListener("storage", (e) => {
+  if (e.key === "token" && !e.newValue) {
+    window.location.href = "index.html";
+  }
+});
+
 // --------------------------------------------------------------------------
 // HAMBURGER SIDEBAR
 // --------------------------------------------------------------------------

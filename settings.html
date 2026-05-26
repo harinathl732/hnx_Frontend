@@ -107,9 +107,14 @@
                 <span class="broker-sub-label">Required for trading NFO/MCX instruments.</span>
               </div>
             </div>
-            <button id="authorize-broker-btn" class="btn btn-broker-connect" disabled>
-              <i data-lucide="link"></i> Save Credentials First
-            </button>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: stretch; width: 220px;">
+              <button id="authorize-broker-btn" class="btn btn-broker-connect" disabled style="width: 100%;">
+                <i data-lucide="link"></i> Save Credentials First
+              </button>
+              <button id="disconnect-broker-btn" class="btn btn-danger hidden" style="padding: 0.65rem 1rem; font-size: 0.82rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); color: #ef4444; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; width: 100%;">
+                <i data-lucide="trash-2"></i> Disconnect & Wipe Keys
+              </button>
+            </div>
           </div>
 
           <div class="session-note">
@@ -159,6 +164,9 @@
           if (data.configured) {
             document.getElementById("api-key").value = data.api_key;
             document.getElementById("api-secret").value = "••••••••••••";
+          } else {
+            document.getElementById("api-key").value = "";
+            document.getElementById("api-secret").value = "";
           }
           updateAuthButton(data.configured, data.session_active);
         }
@@ -167,13 +175,17 @@
 
     function updateAuthButton(configured, sessionActive) {
       const btn = document.getElementById("authorize-broker-btn");
+      const discBtn = document.getElementById("disconnect-broker-btn");
       if (!btn) return;
       if (!configured) {
         btn.disabled = true; btn.innerHTML = '<i data-lucide="link"></i> Save Credentials First';
+        discBtn?.classList.add("hidden");
       } else if (sessionActive) {
         btn.disabled = true; btn.innerHTML = '<i data-lucide="check-circle"></i> Broker Linked & Active';
+        discBtn?.classList.remove("hidden");
       } else {
         btn.disabled = false; btn.innerHTML = '<i data-lucide="link"></i> Authenticate Active Session';
+        discBtn?.classList.remove("hidden");
       }
       lucide.createIcons();
     }
@@ -219,6 +231,30 @@
           showToast("Simulator: session linked!");
           updateAuthButton(true, true);
           updateBrokerStatus(true);
+        }
+      });
+
+      // Disconnect broker & wipe keys
+      document.getElementById("disconnect-broker-btn")?.addEventListener("click", async () => {
+        if (!confirm("Are you sure you want to disconnect Zerodha and wipe all saved API credentials?")) return;
+        if (apiConnected) {
+          try {
+            const res = await fetch(`${API_BASE}/brokers/zerodha/disconnect`, {
+              method: "POST",
+              headers: { "Authorization": `Bearer ${jwtToken}` }
+            });
+            if (res.ok) {
+              showToast("Broker disconnected and credentials wiped successfully!");
+              document.getElementById("broker-creds-form").reset();
+              await loadBrokerSettings();
+              updateBrokerStatus(false);
+            } else { showToast("Failed to disconnect broker."); }
+          } catch { showToast("Server error."); }
+        } else {
+          showToast("Simulator: Broker disconnected!");
+          document.getElementById("broker-creds-form").reset();
+          updateAuthButton(false, false);
+          updateBrokerStatus(false);
         }
       });
     }
